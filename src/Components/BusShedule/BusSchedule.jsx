@@ -3,7 +3,7 @@ import "./BusSchedule.css";
 import SideMenu from "../SideMenu/SideMenu";
 import SearchBar from "../SearchBar/SearchBar";
 import BuildingMap from "../../BuildingMap";
-import axios from "axios";
+// import axios from "axios";
 //import { FaRegListAlt } from "react-icons/fa";
 //import { IoEyeSharp, IoMailSharp } from "react-icons/io5";
 //import { useNavigate } from "react-router-dom";
@@ -24,9 +24,7 @@ const Busschedule = () => {
   //Get data
   useEffect(() => {
     // Fetch data from your API local URL: http://localhost:7071/api/bus/schedules just keep the /api/bus/schedules for the deployment
-    axios
-      .get('/api/bus/schedules')
-
+    fetch('/api/bus/schedules')
       .then((response) => {
         setBuses(response.data);
       })

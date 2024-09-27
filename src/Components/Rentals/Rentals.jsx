@@ -6,7 +6,7 @@ import { auth, firestore } from '../../utils/firebase.js';
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import BuildingMap from "../../BuildingMap.jsx";
-import axios from 'axios';
+// import axios from 'axios';
 
 
 const Rentals = () => {
@@ -67,8 +67,7 @@ const Rentals = () => {
   // Get data
   useEffect(() => {
     // Fetch data from your API http://localhost:5000/getRent
-    axios
-      .get('/api/getRent')
+    fetch('/api/getRent')
       .then((response) => {
         setRental(response.data);
       })
