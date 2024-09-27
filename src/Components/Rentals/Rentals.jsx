@@ -68,7 +68,7 @@ const Rentals = () => {
   useEffect(() => {
     // Fetch data from your API http://localhost:5000/getRent
     axios
-      .get('https://campus-transport.azurewebsites.net/api/getRent')
+      .get('/api/getRent')
       .then((response) => {
         setRental(response.data);
       })
@@ -84,7 +84,7 @@ const Rentals = () => {
     // console.log('Location:', rent); // Check user ID
 
     axios
-      .post(`https://campus-transport.azurewebsites.net/api/rent/${UID}/${ritem}/${rent}`, {
+      .post(`/api/rent/${UID}/${ritem}/${rent}`, {
         item: ritem,
         location: rent
       })
