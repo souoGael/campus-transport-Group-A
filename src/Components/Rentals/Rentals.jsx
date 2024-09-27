@@ -67,7 +67,7 @@ const Rentals = () => {
   // Get data
   useEffect(() => {
     // Fetch data from your API http://localhost:5000/getRent
-    fetch('https://victorious-flower-0d362e31e.5.azurestaticapps.net/api/getRent')
+    fetch('/api/getRent')
       .then((response) => {
         setRental(response.data);
       })

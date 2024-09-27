@@ -34,7 +34,7 @@ const Busschedule = () => {
   }, []);
 
   useEffect(() => {
-    fetch('/api/test')
+    fetch('/test')
       .then(response => response.text())
       .then(data => console.log(data))
       .catch(error => console.error('Error:', error));
