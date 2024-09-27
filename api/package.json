@@ -7,9 +7,11 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@azure/functions": "^4.0.0",
     "dotenv": "^16.4.5",
     "firebase-admin": "^12.5.0"
   },
-  "main": "src/{index.js,functions/*.js}"
+  "main": "src/{index.js,functions/*.js}",
+  "devDependencies": {
+    "@azure/functions": "^4.5.1"
+  }
 }

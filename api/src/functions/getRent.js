@@ -6,7 +6,7 @@ app.http('getRent', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
-
+      console.log("Received request for getRent");
         try {
             const snapshot = await db.collection('Rental Station Inventory').get();
         
