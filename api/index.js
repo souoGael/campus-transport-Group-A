@@ -1,6 +1,6 @@
 // Import required modules
-import express from 'express';
-import cors from 'cors';
+const express = require('express');
+const cors = require('cors');
 
 // Initialize the Express application
 const app = express();
@@ -10,9 +10,14 @@ const PORT = process.env.PORT || 3000; // Use PORT from environment variables or
 app.use(cors());
 app.use(express.json());
 
-// Example route: GET request
+// Add route for /rahhhhh
 app.get('/rahhhhh', (req, res) => {
-  res.send( 'Hello from the backend!' );
+  res.json({ message: 'You have reached the /rahhhhh endpoint' });
+});
+
+// Catch-all route for undefined paths
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
 });
 
 
