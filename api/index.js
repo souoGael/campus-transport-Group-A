@@ -5,7 +5,7 @@ const express = require("express");
 const app = express();
 
 // Define a route for the root URL
-app.get("/", (req, res) => {
+app.get("/test", (req, res) => {
   res.send("Express on Vercel");
 });
 
