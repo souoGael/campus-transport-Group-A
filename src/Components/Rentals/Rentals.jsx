@@ -83,7 +83,7 @@ const Rentals = () => {
     // console.log('Location:', rent); // Check user ID
 
     axios
-      .post(`https://victorious-flower-0d362e31e.5.azurestaticapps.net/api/rent/${UID}/${ritem}/${rent}`, {
+      .post(`/api/rent/${UID}/${ritem}/${rent}`, {
         item: ritem,
         location: rent
       })
