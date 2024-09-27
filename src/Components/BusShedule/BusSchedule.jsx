@@ -33,6 +33,19 @@ const Busschedule = () => {
       });
   }, []);
 
+  useEffect(() => {
+    fetch('/api/test', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'text/plain',
+      },
+      body: 'testing testing'
+  })
+      .then(response => response.text())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
+
   return (
     <div className="Bus-container">
       <div className="content-container map-back">
