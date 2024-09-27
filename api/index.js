@@ -1,6 +1,6 @@
 // Import required modules
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
 
 // Initialize the Express application
 const app = express();
@@ -11,8 +11,8 @@ app.use(cors());
 app.use(express.json());
 
 // Example route: GET request
-app.get('/bet', (req, res) => {
-  res.json({ message: 'Hello from the backend!' });
+app.get('/rahhhhh', (req, res) => {
+  res.send( 'Hello from the backend!' );
 });
 
 
