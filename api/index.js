@@ -1,29 +1,18 @@
-// Import required modules
-const express = require('express');
-const cors = require('cors');
+// Import Express.js
+const express = require("express");
 
-// Initialize the Express application
+// Initialize the Express app
 const app = express();
-const PORT = process.env.PORT || 3000; // Use PORT from environment variables or default to 3000
 
-// Middleware to handle CORS and JSON requests
-app.use(cors());
-app.use(express.json());
-
-// Example route: GET request
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Hello from the backend!' });
+// Define a route for the root URL
+app.get("/", (req, res) => {
+  res.send("Express on Vercel");
 });
 
-// Example route: POST request
-app.post('/api/submit', (req, res) => {
-  const { name } = req.body;
-  res.json({ message: `Hello, ${name}!` });
+// Start the server and listen on port 3000
+app.listen(3000, () => {
+  console.log("Server ready on port 3000.");
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
-module.exports = app; // For Vercel deployments
+// Export the app for Vercel to use
+module.exports = app;
