@@ -67,7 +67,7 @@ const Rentals = () => {
   // Get data
   useEffect(() => {
     // Fetch data from your API http://localhost:5000/getRent
-    fetch('/api/getRent')
+    fetch('https://victorious-flower-0d362e31e.5.azurestaticapps.net/api/getRent')
       .then((response) => {
         setRental(response.data);
       })
@@ -83,7 +83,7 @@ const Rentals = () => {
     // console.log('Location:', rent); // Check user ID
 
     axios
-      .post(`/api/rent/${UID}/${ritem}/${rent}`, {
+      .post(`https://victorious-flower-0d362e31e.5.azurestaticapps.net/api/rent/${UID}/${ritem}/${rent}`, {
         item: ritem,
         location: rent
       })

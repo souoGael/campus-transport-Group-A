@@ -24,7 +24,7 @@ const Busschedule = () => {
   //Get data
   useEffect(() => {
     // Fetch data from your API local URL: http://localhost:7071/api/bus/schedules just keep the /api/bus/schedules for the deployment
-    fetch('/api/bus/schedules')
+    fetch('https://victorious-flower-0d362e31e.5.azurestaticapps.net/api/bus/schedules')
       .then((response) => {
         setBuses(response.data);
       })
@@ -34,13 +34,7 @@ const Busschedule = () => {
   }, []);
 
   useEffect(() => {
-    fetch('/api/test', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'text/plain',
-      },
-      body: 'testing testing'
-  })
+    fetch('https://victorious-flower-0d362e31e.5.azurestaticapps.net/api/test')
       .then(response => response.text())
       .then(data => console.log(data))
       .catch(error => console.error('Error:', error));
