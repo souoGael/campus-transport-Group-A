@@ -1,0 +1,96 @@
+/* Container for the entire rentals page */
+.rentals-container {
+  display: flex;
+  width: 100%;
+  height: inherit;
+  /*background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 15px;
+  margin-left: 190px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: -20vh;*/
+}
+
+/* Styling for the search bar */
+/*.search-bar {
+  width: 100%;
+  padding: 10px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  margin: 20px 0px;
+  font-size: 16px;
+  text-align: center;
+}*/
+
+/* Bicycle list items */
+.bicycle-list {
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
+}
+
+.bicycle-item {
+  background-color: white;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.bicycle-item h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.bicycle-item p {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #666;
+}
+
+/* Rent link */
+.rent-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.rent-link:hover {
+  text-decoration: underline;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.popup-content button {
+  margin-top: 10px;
+}
+
+.rentBtn{
+  width: 50px;
+  margin: 10px;
+  height: 30px;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+}

@@ -1,0 +1,28 @@
+/* HomePageForm.css */
+
+.Logout-container {
+  display: flex;
+  height: 100%;
+}
+
+.logout {
+  background-color: white;
+  width: 300px;
+  height: 150px;
+  border-radius: 15px;
+  margin-left: 30px;
+  margin-top: 50%;
+}
+
+.logout .question {
+  margin-left: 100px;
+  padding-top: 30px;
+}
+
+.logout button {
+  width: 80px;
+  padding: 5px;
+  margin-top: 25px;
+  margin-left: 45px;
+  border-radius: 10px;
+}

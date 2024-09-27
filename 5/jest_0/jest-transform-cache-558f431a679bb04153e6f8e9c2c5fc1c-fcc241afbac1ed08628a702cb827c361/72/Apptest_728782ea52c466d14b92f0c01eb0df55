@@ -1,0 +1,26 @@
+30effa12cdd7c21deb8c55ac12f15334
+"use strict";
+
+var _interopRequireDefault = require("/app/Group-A/node_modules/@babel/runtime/helpers/interopRequireDefault.js").default;
+var _react = _interopRequireDefault(require("react"));
+var _react2 = require("@testing-library/react");
+var _App = _interopRequireDefault(require("./App"));
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _jsxFileName = "/app/Group-A/src/App.test.js";
+test("renders App component", () => {
+  (0, _react2.render)(/*#__PURE__*/(0, _jsxDevRuntime.jsxDEV)(_App.default, {}, void 0, false, {
+    fileName: _jsxFileName,
+    lineNumber: 6,
+    columnNumber: 10
+  }, void 0));
+
+  // Check for an element that you know should be in your App
+  // For example, if you have a header with the text "My App", you could use:
+  const headerElement = _react2.screen.getByRole("heading");
+  expect(headerElement).toBeInTheDocument();
+
+  // Or, if you have a main content area:
+  const mainElement = _react2.screen.getByRole("main");
+  expect(mainElement).toBeInTheDocument();
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfcmVhY3QiLCJfaW50ZXJvcFJlcXVpcmVEZWZhdWx0IiwicmVxdWlyZSIsIl9yZWFjdDIiLCJfQXBwIiwiX2pzeERldlJ1bnRpbWUiLCJfanN4RmlsZU5hbWUiLCJ0ZXN0IiwicmVuZGVyIiwianN4REVWIiwiZGVmYXVsdCIsImZpbGVOYW1lIiwibGluZU51bWJlciIsImNvbHVtbk51bWJlciIsImhlYWRlckVsZW1lbnQiLCJzY3JlZW4iLCJnZXRCeVJvbGUiLCJleHBlY3QiLCJ0b0JlSW5UaGVEb2N1bWVudCIsIm1haW5FbGVtZW50Il0sInNvdXJjZXMiOlsiQXBwLnRlc3QuanMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFJlYWN0IGZyb20gXCJyZWFjdFwiO1xuaW1wb3J0IHsgcmVuZGVyLCBzY3JlZW4gfSBmcm9tIFwiQHRlc3RpbmctbGlicmFyeS9yZWFjdFwiO1xuaW1wb3J0IEFwcCBmcm9tIFwiLi9BcHBcIjtcblxudGVzdChcInJlbmRlcnMgQXBwIGNvbXBvbmVudFwiLCAoKSA9PiB7XG4gIHJlbmRlcig8QXBwIC8+KTtcblxuICAvLyBDaGVjayBmb3IgYW4gZWxlbWVudCB0aGF0IHlvdSBrbm93IHNob3VsZCBiZSBpbiB5b3VyIEFwcFxuICAvLyBGb3IgZXhhbXBsZSwgaWYgeW91IGhhdmUgYSBoZWFkZXIgd2l0aCB0aGUgdGV4dCBcIk15IEFwcFwiLCB5b3UgY291bGQgdXNlOlxuICBjb25zdCBoZWFkZXJFbGVtZW50ID0gc2NyZWVuLmdldEJ5Um9sZShcImhlYWRpbmdcIik7XG4gIGV4cGVjdChoZWFkZXJFbGVtZW50KS50b0JlSW5UaGVEb2N1bWVudCgpO1xuXG4gIC8vIE9yLCBpZiB5b3UgaGF2ZSBhIG1haW4gY29udGVudCBhcmVhOlxuICBjb25zdCBtYWluRWxlbWVudCA9IHNjcmVlbi5nZXRCeVJvbGUoXCJtYWluXCIpO1xuICBleHBlY3QobWFpbkVsZW1lbnQpLnRvQmVJblRoZURvY3VtZW50KCk7XG59KTtcbiJdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsSUFBQUEsTUFBQSxHQUFBQyxzQkFBQSxDQUFBQyxPQUFBO0FBQ0EsSUFBQUMsT0FBQSxHQUFBRCxPQUFBO0FBQ0EsSUFBQUUsSUFBQSxHQUFBSCxzQkFBQSxDQUFBQyxPQUFBO0FBQXdCLElBQUFHLGNBQUEsR0FBQUgsT0FBQTtBQUFBLElBQUFJLFlBQUE7QUFFeEJDLElBQUksQ0FBQyx1QkFBdUIsRUFBRSxNQUFNO0VBQ2xDLElBQUFDLGNBQU0sZUFBQyxJQUFBSCxjQUFBLENBQUFJLE1BQUEsRUFBQ0wsSUFBQSxDQUFBTSxPQUFHO0lBQUFDLFFBQUEsRUFBQUwsWUFBQTtJQUFBTSxVQUFBO0lBQUFDLFlBQUE7RUFBQSxTQUFFLENBQUMsQ0FBQzs7RUFFZjtFQUNBO0VBQ0EsTUFBTUMsYUFBYSxHQUFHQyxjQUFNLENBQUNDLFNBQVMsQ0FBQyxTQUFTLENBQUM7RUFDakRDLE1BQU0sQ0FBQ0gsYUFBYSxDQUFDLENBQUNJLGlCQUFpQixDQUFDLENBQUM7O0VBRXpDO0VBQ0EsTUFBTUMsV0FBVyxHQUFHSixjQUFNLENBQUNDLFNBQVMsQ0FBQyxNQUFNLENBQUM7RUFDNUNDLE1BQU0sQ0FBQ0UsV0FBVyxDQUFDLENBQUNELGlCQUFpQixDQUFDLENBQUM7QUFDekMsQ0FBQyxDQUFDIiwiaWdub3JlTGlzdCI6W119

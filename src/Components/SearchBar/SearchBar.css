@@ -1,0 +1,82 @@
+/* SearchBar.css */
+.search-form {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: white;
+}
+
+.search-icon {
+  margin-left: 15px;
+  margin-right: 20px;
+  font-size: 18px;
+  color: #888;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  border-radius: 30px;
+}
+
+.clear-icon {
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  margin-right: 15px;
+}
+
+.search-input::placeholder {
+  color: #bbb;
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+.clear-icon:hover {
+  color: #333;
+}
+
+/* Full-screen overlay */
+.overlay {
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  margin-right: -15vh;
+  margin-top: 20px;
+  background: transparent; /* Dark overlay */
+  z-index: 999; /* Above all content */
+}
+
+/* Dropdown list styles */
+.recent-searches-dropdown {
+  position: relative;
+  background: white;
+  border-radius: 15px;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.recent-search-item {
+  cursor: pointer;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.recent-search-item:hover {
+  background: #f0f0f0;
+}
+
+/* Hide page content when dropdown is visible */
+.content-hidden {
+  display: none;
+}

@@ -1,0 +1,30 @@
+0ccc33f01189e13148e419c9c544a987
+"use strict";
+
+var _interopRequireDefault = require("/app/Group-A/node_modules/@babel/runtime/helpers/interopRequireDefault.js").default;
+var _react = _interopRequireDefault(require("react"));
+var _react2 = require("@testing-library/react");
+var _App = _interopRequireDefault(require("./App"));
+var _testUtils = require("./testUtils");
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _jsxFileName = "/app/Group-A/src/App.test.js";
+test("renders App component", () => {
+  // If your App already includes a Router, set useMemoryRouter to false
+  (0, _testUtils.renderWithRouter)(/*#__PURE__*/(0, _jsxDevRuntime.jsxDEV)(_App.default, {}, void 0, false, {
+    fileName: _jsxFileName,
+    lineNumber: 8,
+    columnNumber: 20
+  }, void 0), {
+    useMemoryRouter: false
+  });
+
+  // Check for elements that you know should be in your App
+  // For example, if you have a header:
+  const headerElement = _react2.screen.getByRole("heading");
+  expect(headerElement).toBeInTheDocument();
+
+  // Or, if you have a main content area:
+  const mainElement = _react2.screen.getByRole("main");
+  expect(mainElement).toBeInTheDocument();
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfcmVhY3QiLCJfaW50ZXJvcFJlcXVpcmVEZWZhdWx0IiwicmVxdWlyZSIsIl9yZWFjdDIiLCJfQXBwIiwiX3Rlc3RVdGlscyIsIl9qc3hEZXZSdW50aW1lIiwiX2pzeEZpbGVOYW1lIiwidGVzdCIsInJlbmRlcldpdGhSb3V0ZXIiLCJqc3hERVYiLCJkZWZhdWx0IiwiZmlsZU5hbWUiLCJsaW5lTnVtYmVyIiwiY29sdW1uTnVtYmVyIiwidXNlTWVtb3J5Um91dGVyIiwiaGVhZGVyRWxlbWVudCIsInNjcmVlbiIsImdldEJ5Um9sZSIsImV4cGVjdCIsInRvQmVJblRoZURvY3VtZW50IiwibWFpbkVsZW1lbnQiXSwic291cmNlcyI6WyJBcHAudGVzdC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgUmVhY3QgZnJvbSBcInJlYWN0XCI7XG5pbXBvcnQgeyBzY3JlZW4gfSBmcm9tIFwiQHRlc3RpbmctbGlicmFyeS9yZWFjdFwiO1xuaW1wb3J0IEFwcCBmcm9tIFwiLi9BcHBcIjtcbmltcG9ydCB7IHJlbmRlcldpdGhSb3V0ZXIgfSBmcm9tIFwiLi90ZXN0VXRpbHNcIjtcblxudGVzdChcInJlbmRlcnMgQXBwIGNvbXBvbmVudFwiLCAoKSA9PiB7XG4gIC8vIElmIHlvdXIgQXBwIGFscmVhZHkgaW5jbHVkZXMgYSBSb3V0ZXIsIHNldCB1c2VNZW1vcnlSb3V0ZXIgdG8gZmFsc2VcbiAgcmVuZGVyV2l0aFJvdXRlcig8QXBwIC8+LCB7IHVzZU1lbW9yeVJvdXRlcjogZmFsc2UgfSk7XG5cbiAgLy8gQ2hlY2sgZm9yIGVsZW1lbnRzIHRoYXQgeW91IGtub3cgc2hvdWxkIGJlIGluIHlvdXIgQXBwXG4gIC8vIEZvciBleGFtcGxlLCBpZiB5b3UgaGF2ZSBhIGhlYWRlcjpcbiAgY29uc3QgaGVhZGVyRWxlbWVudCA9IHNjcmVlbi5nZXRCeVJvbGUoXCJoZWFkaW5nXCIpO1xuICBleHBlY3QoaGVhZGVyRWxlbWVudCkudG9CZUluVGhlRG9jdW1lbnQoKTtcblxuICAvLyBPciwgaWYgeW91IGhhdmUgYSBtYWluIGNvbnRlbnQgYXJlYTpcbiAgY29uc3QgbWFpbkVsZW1lbnQgPSBzY3JlZW4uZ2V0QnlSb2xlKFwibWFpblwiKTtcbiAgZXhwZWN0KG1haW5FbGVtZW50KS50b0JlSW5UaGVEb2N1bWVudCgpO1xufSk7XG4iXSwibWFwcGluZ3MiOiI7OztBQUFBLElBQUFBLE1BQUEsR0FBQUMsc0JBQUEsQ0FBQUMsT0FBQTtBQUNBLElBQUFDLE9BQUEsR0FBQUQsT0FBQTtBQUNBLElBQUFFLElBQUEsR0FBQUgsc0JBQUEsQ0FBQUMsT0FBQTtBQUNBLElBQUFHLFVBQUEsR0FBQUgsT0FBQTtBQUErQyxJQUFBSSxjQUFBLEdBQUFKLE9BQUE7QUFBQSxJQUFBSyxZQUFBO0FBRS9DQyxJQUFJLENBQUMsdUJBQXVCLEVBQUUsTUFBTTtFQUNsQztFQUNBLElBQUFDLDJCQUFnQixlQUFDLElBQUFILGNBQUEsQ0FBQUksTUFBQSxFQUFDTixJQUFBLENBQUFPLE9BQUc7SUFBQUMsUUFBQSxFQUFBTCxZQUFBO0lBQUFNLFVBQUE7SUFBQUMsWUFBQTtFQUFBLFNBQUUsQ0FBQyxFQUFFO0lBQUVDLGVBQWUsRUFBRTtFQUFNLENBQUMsQ0FBQzs7RUFFckQ7RUFDQTtFQUNBLE1BQU1DLGFBQWEsR0FBR0MsY0FBTSxDQUFDQyxTQUFTLENBQUMsU0FBUyxDQUFDO0VBQ2pEQyxNQUFNLENBQUNILGFBQWEsQ0FBQyxDQUFDSSxpQkFBaUIsQ0FBQyxDQUFDOztFQUV6QztFQUNBLE1BQU1DLFdBQVcsR0FBR0osY0FBTSxDQUFDQyxTQUFTLENBQUMsTUFBTSxDQUFDO0VBQzVDQyxNQUFNLENBQUNFLFdBQVcsQ0FBQyxDQUFDRCxpQkFBaUIsQ0FBQyxDQUFDO0FBQ3pDLENBQUMsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==
