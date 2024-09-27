@@ -10,6 +10,10 @@ const PORT = process.env.PORT || 3000; // Use PORT from environment variables or
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Lets go boy' );
+});
+
 // Add route for /rahhhhh
 app.get('/rahhhhh', (req, res) => {
   res.json({ message: 'You have reached the /rahhhhh endpoint' });
