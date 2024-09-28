@@ -3,6 +3,7 @@ import "./BusSchedule.css";
 import SideMenu from "../SideMenu/SideMenu";
 import SearchBar from "../SearchBar/SearchBar";
 import BuildingMap from "../../BuildingMap";
+import API_BASE_URL from '../../url_config';
 // import axios from "axios";
 //import { FaRegListAlt } from "react-icons/fa";
 //import { IoEyeSharp, IoMailSharp } from "react-icons/io5";
@@ -24,20 +25,13 @@ const Busschedule = () => {
   //Get data
   useEffect(() => {
     // Fetch data from your API local URL: http://localhost:7071/api/bus/schedules just keep the /api/bus/schedules for the deployment
-    fetch('/api/bus/schedules')
+    fetch(`${API_BASE_URL}/getSchedule`)
       .then((response) => {
         setBuses(response.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, []);
-
-  useEffect(() => {
-    fetch('/test')
-      .then(response => response.text())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error:', error));
   }, []);
 
   return (

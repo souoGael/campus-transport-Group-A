@@ -66,8 +66,8 @@ const Rentals = () => {
 
   // Get data
   useEffect(() => {
-    // Fetch data from your API http://localhost:5000/getRent
-    fetch('/api/getRent')
+    // Fetch data from your API https://api-campus-transport-ebon.vercel.app/getRent
+    fetch(`${API_BASE_URL}/getRent`)
       .then((response) => {
         setRental(response.data);
       })
@@ -83,7 +83,7 @@ const Rentals = () => {
     // console.log('Location:', rent); // Check user ID
 
     axios
-      .post(`/api/rent/${UID}/${ritem}/${rent}`, {
+      .post(`${API_BASE_URL}/rent/${UID}/${ritem}/${rent}`, {
         item: ritem,
         location: rent
       })
