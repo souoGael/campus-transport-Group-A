@@ -75,9 +75,8 @@ app.get('/getRent', async (req, res) => {
 });
   
 // Rent
-app.post('/rent/:userId/:item/:location', async (req, res) => {
-    // const { rentalId, userId, item, location } = req.body; // Get userId and location from the request body
-    const { userId, item, location } = req.params;
+app.post('/rent', async (req, res) => {
+    const { rentalId, userId, item, location } = req.body; // Get userId and location from the request body
 
     try {
 
