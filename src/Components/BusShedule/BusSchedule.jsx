@@ -4,7 +4,7 @@ import SideMenu from "../SideMenu/SideMenu";
 import SearchBar from "../SearchBar/SearchBar";
 import BuildingMap from "../../BuildingMap";
 // import API_BASE_URL from '../../url_config';
-// import axios from "axios";
+import axios from "axios";
 //import { FaRegListAlt } from "react-icons/fa";
 //import { IoEyeSharp, IoMailSharp } from "react-icons/io5";
 //import { useNavigate } from "react-router-dom";
@@ -25,7 +25,8 @@ const Busschedule = () => {
   //Get data
   useEffect(() => {
     // Fetch data from your API local URL: http://localhost:7071/api/bus/schedules just keep the /api/bus/schedules for the deployment
-    fetch(`https://api-campus-transport.vercel.app/getSchedule`)
+    axios
+    .get(`https://api-campus-transport.vercel.app/getSchedule`)
       .then((response) => {
         setBuses(response.data);
         console.log(response.data);
