@@ -59,19 +59,19 @@ app.get('/getRent', async (req, res) => {
     }
   });
   
-  // API route to fetch data from Firestore about main locations
-  app.get('/getLocations', async (req, res) => {
-    try {
-      const snapshot = await db.collection('Main Locations').get();
-  
-      let data = [];
-      snapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() });
-      });
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching data', error });
-    }
+// API route to fetch data from Firestore about main locations
+app.get('/getLocations', async (req, res) => {
+  try {
+    const snapshot = await db.collection('Main Locations').get();
+
+    let data = [];
+    snapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching data', error });
+  }
 });
   
 // Rent
