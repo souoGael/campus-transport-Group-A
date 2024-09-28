@@ -75,15 +75,15 @@ app.get('/getRent', async (req, res) => {
 });
   
 // Rent
-app.post('/rent', async (req, res) => {
-    const { rentalId, userId, item, location } = req.body; // Get userId and location from the request body
+app.post('/rent/:userId/:item/:location', async (req, res) => {
+    const { userId, item, location } = req.params; // Get userId and location from the request body
 
     try {
 
         const decrement = admin.firestore.FieldValue.increment(-1);
 
         // Reference to the rental document
-        const rentalRef = db.collection('Rental Station Inventory').doc(rentalId);
+        const rentalRef = db.collection('Rental Station Inventory').doc(item);
         const rentalDoc = await rentalRef.get();
 
         if (!rentalDoc.exists) {
