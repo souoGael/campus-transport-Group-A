@@ -122,8 +122,16 @@ app.post('/rent', async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
-  
 
+// Example route: POST request to handle the rental
+app.post('/rent/:UID/:ritem/:rent', (req, res) => {
+  const { UID, ritem, rent } = req.params;
+  
+  // Your rental logic here (e.g., saving to the database)
+  
+  res.json({ message: `Item ${ritem} rented by user ${UID} at location ${rent}.` });
+});
+  
 app.listen(3000, () => console.log("Server ready on port 3000."));
 
 module.exports = app;
