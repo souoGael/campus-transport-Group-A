@@ -25,7 +25,7 @@ const Busschedule = () => {
   //Get data
   useEffect(() => {
     // Fetch data from your API local URL: http://localhost:7071/api/bus/schedules just keep the /api/bus/schedules for the deployment
-    fetch(`https://api-campus-transport-ebon.vercel.app/getSchedule`)
+    fetch(`https://api-campus-transport.vercel.app/getSchedule`)
       .then((response) => {
         setBuses(response.data);
       })
