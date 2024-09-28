@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const admin = require('firebase-admin');
 
@@ -11,9 +12,11 @@ admin.initializeApp({
   
 const db = admin.firestore();
 
+app.use(cors());
+
 // CORS middleware
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // Allow all origins or specify your origin
+  res.header('Access-Control-Allow-Origin', 'https://victorious-flower-0d362e31e.5.azurestaticapps.net'); // Allow all origins or specify your origin
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
