@@ -79,9 +79,9 @@ const Rentals = () => {
 
   // Handle Rent button click
   const handleRent = (ritem, rent) => {
-    console.log('Rental ID:', ritem); // Check rental ID
-    console.log('User ID:', UID); // Check user ID
-    console.log('Location:', rent); // Check user ID
+    // console.log('Rental ID:', ritem); // Check rental ID
+    // console.log('User ID:', UID); // Check user ID
+    // console.log('Location:', rent); // Check user ID
 
     axios
       .post(`https://api-campus-transport.vercel.app/rent/${UID}/${ritem}/${rent}`)

@@ -29,7 +29,6 @@ const Busschedule = () => {
     .get(`https://api-campus-transport.vercel.app/getSchedule`)
       .then((response) => {
         setBuses(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
