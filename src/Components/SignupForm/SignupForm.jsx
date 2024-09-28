@@ -28,6 +28,7 @@ const SignUpForm = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const kudu = useState(Math.random(100));
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
 
@@ -57,6 +58,7 @@ const SignUpForm = () => {
         firstName: firstName,
         lastName: lastName,
         email: email,
+        kudu: kudu,
       });
 
       toast.success("Account created successfully! Please verify your email.");
@@ -66,6 +68,8 @@ const SignUpForm = () => {
       toast.error(error.message);
     }
   };
+
+
 
   const handleLoginClick = () => {
     // If the user navigates to login without signing up, do not pass the success state
