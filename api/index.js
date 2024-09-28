@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const admin = require('firebase-admin');
-const cors = require('cors');
 
 // Initialize the Firebase Admin SDK
 const serviceAccount = require('./serviceAccount.js');
@@ -13,10 +12,12 @@ admin.initializeApp({
 const db = admin.firestore();
 
 // Middleware to handle CORS
-app.use(cors({
-  origin: 'https://victorious-flower-0d362e31e.5.azurestaticapps.net', 
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
-}));
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "https://victorious-flower-0d362e31e.5.azurestaticapps.net"); // Update this with your Azure domain
+//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   next();
+// });
 
 app.get("/", (req, res) => { res.send("Express campus-transportation live") } );
 
