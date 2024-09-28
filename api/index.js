@@ -75,8 +75,9 @@ app.get('/getRent', async (req, res) => {
 });
   
 // Rent
-app.post('/rent', async (req, res) => {
-    const { rentalId, userId, item, location } = req.body; // Get userId and location from the request body
+app.post('/rent/:userId/:item/:location', async (req, res) => {
+    // const { rentalId, userId, item, location } = req.body; // Get userId and location from the request body
+    const { userId, item, location } = req.params;
 
     try {
 
@@ -87,19 +88,19 @@ app.post('/rent', async (req, res) => {
         const rentalDoc = await rentalRef.get();
 
         if (!rentalDoc.exists) {
-        return res.status(404).json({ message: 'Rental item not found' });
+          return res.status(404).json({ message: 'Rental item not found' });
         }
 
         const rentalData = rentalDoc.data();
 
         // Check availability
         if (rentalData.availability <= 0) {
-        return res.status(400).json({ message: 'Item not available for rent' });
+          return res.status(400).json({ message: 'Item not available for rent' });
         }
 
         // Decrease availability
         rentalRef.update({
-        availability: decrement
+          availability: decrement
         });
 
         // Reference to the user document
@@ -110,13 +111,13 @@ app.post('/rent', async (req, res) => {
 
         // Check if the user document exists
         if (!userDoc.exists) {
-        return res.status(404).json({ message: 'User not found' });
+          return res.status(404).json({ message: 'User not found' });
         }
 
         // Update the document by adding a new field
         await userRef.update({
-        item: item,
-        location: location // Add or update the location field
+          item: item,
+          location: location // Add or update the location field
         });
 
         return res.status(200).json({ message: 'Location added successfully' });
@@ -126,15 +127,6 @@ app.post('/rent', async (req, res) => {
     }
 });
 
-// Example route: POST request to handle the rental
-app.post('/rent/:UID/:ritem/:rent', (req, res) => {
-  const { UID, ritem, rent } = req.params;
-  
-  // Your rental logic here (e.g., saving to the database)
-  
-  res.json({ message: `Item ${ritem} rented by user ${UID} at location ${rent}.` });
-});
-  
 app.listen(3000, () => console.log("Server ready on port 3000."));
 
 module.exports = app;
