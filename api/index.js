@@ -59,19 +59,19 @@ app.get('/getRent', async (req, res) => {
     }
   });
   
-  // API route to fetch data from Firestore about main locations
-  app.get('/getLocations', async (req, res) => {
-    try {
-      const snapshot = await db.collection('Main Locations').get();
-  
-      let data = [];
-      snapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() });
-      });
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(500).json({ message: 'Error fetching data', error });
-    }
+// API route to fetch data from Firestore about main locations
+app.get('/getLocations', async (req, res) => {
+  try {
+    const snapshot = await db.collection('Buildings').get();
+
+    let data = [];
+    snapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching data', error });
+  }
 });
   
 // Rent
@@ -124,6 +124,51 @@ app.post('/rent/:userId/:item/:location', async (req, res) => {
         console.error('Error updating document: ', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
+});
+
+// Cancel Rental
+app.post('/cancel-rent/:userId/:item', async (req, res) => {
+  const { userId, item } = req.params; // Get userId and item from the request params
+
+  try {
+      // Increment availability
+      const increment = admin.firestore.FieldValue.increment(1);
+
+      // Reference to the rental document
+      const rentalRef = db.collection('Rental Station Inventory').doc(item);
+      const rentalDoc = await rentalRef.get();
+
+      if (!rentalDoc.exists) {
+          return res.status(404).json({ message: 'Rental item not found' });
+      }
+
+      // Increment the availability of the rental item
+      await rentalRef.update({
+          availability: increment
+      });
+
+      // Reference to the user document
+      const userRef = db.collection('Users').doc(userId);
+      
+      // Fetch the user document
+      const userDoc = await userRef.get();
+
+      // Check if the user document exists
+      if (!userDoc.exists) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Remove the 'item' and 'location' fields from the user's document
+      await userRef.update({
+          item: admin.firestore.FieldValue.delete(),
+          location: admin.firestore.FieldValue.delete()
+      });
+
+      return res.status(200).json({ message: 'Rental cancelled and fields removed successfully' });
+  } catch (error) {
+      console.error('Error cancelling rental: ', error);
+      return res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 app.listen(3000, () => console.log("Server ready on port 3000."));

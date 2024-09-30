@@ -3,11 +3,10 @@ import "./Rentals.css";
 import SideMenu from "../SideMenu/SideMenu";
 import SearchBar from "../SearchBar/SearchBar";
 import { auth, firestore } from '../../utils/firebase.js';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import BuildingMap from "../../BuildingMap.jsx";
-// import API_BASE_URL from '../../url_config';
 import axios from 'axios';
+import BuildingMap from "../Map/BuildingMap.jsx";
 
 
 const Rentals = () => {
@@ -17,10 +16,13 @@ const Rentals = () => {
   };
 
   const [showPopup, setShowPopup] = useState(false);
+  const [showLoadKuduPopup, setShowLoadKuduPopup] = useState(false);
+
   const [selectedBike, setSelectedBike] = useState(null);
   const [rental, setRental] = useState([]);
   const [UID, setUserId] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+  const [kudu, setKudu] = useState(0); // Store user's Kudu Bucks
 
   useEffect(() => {
     // Add class when component mounts
@@ -40,15 +42,18 @@ const Rentals = () => {
         setUserId(user.uid);
         console.log('User ID:', user.uid);
 
-        // Fetch user document to check if location exists
+        // Fetch user document to check if location and kudu bucks exists
         const userRef = doc(firestore, 'Users', user.uid);
         getDoc(userRef).then((docSnap) => {
           if (docSnap.exists()) {
             const userData = docSnap.data();
             setUserLocation(userData.location); // Set user's location
+            setKudu(userData.kudu); // Set user's Kudu Bucks
             console.log('User location:', userData.location); // Log the location for debugging
           } else {
-            console.log('No such user document!');
+            setUserId(null);
+            setUserLocation(null); 
+            console.log('No user is logged in');
           }
         }).catch((error) => {
           console.error('Error fetching user document:', error);
@@ -67,8 +72,8 @@ const Rentals = () => {
 
   // Get data
   useEffect(() => {
-    // Fetch data from your API https://api-campus-transport-ebon.vercel.app/getRent
-    axios.get(`https://api-campus-transport.vercel.app/getRent`)
+    axios
+      .get('https://api-campus-transport.vercel.app/getRent')
       .then((response) => {
         setRental(response.data);
       })
@@ -79,15 +84,33 @@ const Rentals = () => {
 
   // Handle Rent button click
   const handleRent = (ritem, rent) => {
-    // console.log('Rental ID:', ritem); // Check rental ID
-    // console.log('User ID:', UID); // Check user ID
-    // console.log('Location:', rent); // Check user ID
+   
+    if (kudu < 10) {
+      alert("You need more Kudu Bucks to rent this ride.");
+      handleClosePopup();
+      return;
+    }
 
     axios
       .post(`https://api-campus-transport.vercel.app/rent/${UID}/${ritem}/${rent}`)
       .then((response) => {
         console.log('Rental successful:', response.data);
         handleHOME();
+        const newKuduBalance = kudu - 10;
+        setKudu(newKuduBalance); // Update the local state
+
+        const userRef = doc(firestore, 'Users', UID);
+        updateDoc(userRef, {
+          kudu: newKuduBalance,
+        })
+        .then(() => {
+          console.log('Kudu Bucks updated successfully in Firestore.');
+        })
+        .catch((error) => {
+          console.error('Error updating Kudu Bucks in Firestore:', error);
+          alert('Error updating Kudu Bucks.');
+        });
+
         alert('Rental successful!');
         handleClosePopup();
       })
@@ -96,6 +119,7 @@ const Rentals = () => {
         alert('Error renting item.');
       });
   };
+
 
   const handleRentClick = (bike) => {
     setSelectedBike(bike);
@@ -147,16 +171,38 @@ const Rentals = () => {
                   Location: {selectedBike?.location} <br />
                 </p>
 
+                {/* Rent Button with Conditional Logic */}
                 {!userLocation && ( // Only render the Rent button if userLocation is not present
-                  <button 
-                    className="rentBtn" 
-                    onClick={() => handleRent(selectedBike?.id, selectedBike?.location)}
-                  >
-                    Rent
-                  </button>
+                  <button
+                    className="rentBtn"
+                    onClick={() => {
+                      if (kudu < 10) {
+                        setShowLoadKuduPopup(true); // Show the popup to load more Kudu Bucks
+                      } else {
+                        handleRent(selectedBike?.id, selectedBike?.location);
+                      }
+                    }}
+                    style={{ backgroundColor: kudu < 10 ? 'red' : 'green' }}
+                    >
+                      Rent
+                    </button>
                 )}
 
                 <button className="closeBtn" onClick={handleClosePopup}>Close</button>
+              </div>
+            </div>
+          )}
+          {/* Popup to Load More Kudu Bucks */}
+          {showLoadKuduPopup && (
+            <div className="popup-overlay">
+              <div className="popup-content">
+                <h4>Insufficient Kudu Bucks</h4>
+                <p>
+                  You do not have enough Kudu Bucks to rent this item. Please load more Kudu Bucks to proceed.
+                </p>
+                <button className="closeBtn" onClick={() => setShowLoadKuduPopup(false)}>
+                  Close
+                </button>
               </div>
             </div>
           )}

@@ -5,16 +5,27 @@ import SearchBar from "../SearchBar/SearchBar";
 import { FaUser } from "react-icons/fa";
 import axios from "axios";
 import { sendPasswordResetEmail } from "firebase/auth";
-import auth from "../../utils/firebase";
+import { auth, firestore } from '../../utils/firebase.js';
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import BuildingMap from "../../BuildingMap";
+import BuildingMap from "../Map/BuildingMap";
 
 const Profile = () => {
-  const [buses, setBuses] = useState([]);
+  const navigate = useNavigate();
+  const handleHOME = () => {
+    navigate("/Homepage");
+  };
+
   const [fullName, setFullName] = useState("John Doe"); // Default to "John Doe" for now
-  const [email, setEmail] = useState("uhone1593@gmail.com"); // Existing email
+  const [email, setEmail] = useState("John@gmail.com"); // Existing email
+  const [kudu, setKudu]=useState("")
+  const [UID, setUserId] = useState(null);
+  const [rental, setRental] = useState([]);
+  const [userData, setUserData] = useState(null);
   const [showForgotPassword, setShowForgotPassword] = useState(false); // Toggle password reset form within the card
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     // Add class when component mounts
@@ -28,15 +39,36 @@ const Profile = () => {
 
   // Get data
   useEffect(() => {
-    // Fetch data from your API
-    axios
-      .get("https://campus-transport.azurewebsites.net/getSchedule")
-      .then((response) => {
-        setBuses(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in, set the user ID
+        setUserId(user.uid);
+        console.log('User ID:', user.uid);
+        // Fetch user document to check if location exists
+        const userRef = doc(firestore, 'Users', user.uid);
+        getDoc(userRef).then((docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setUserData(userData); // Set user's location
+            setEmail(userData.email);
+            setKudu(userData.kudu)
+            setFullName(`${userData.firstName} ${userData.lastName}`);
+            console.log('User Data:', userData); // Log the location for debugging
+          } else {
+            console.log('No such user document!');
+          }
+        }).catch((error) => {
+          console.error('Error fetching user document:', error);
+        });
+      } else{
+        setUserId(null);
+        setUserData(null); // Reset user location
+        console.log('No user is logged in');
+      }
+    });
+
+    // Clean up subscription on unmount
+    return () => unsubscribe();
   }, []);
 
   // Handle password reset
@@ -50,6 +82,66 @@ const Profile = () => {
     } catch (error) {
       console.error(error.message);
       toast.error("Error sending password reset email. Please try again.");
+    }
+  };
+  
+  // Handle Rent button click
+  const cancelRent = (ritem) => {
+   
+    if (kudu < 10) {
+      alert("You need more Kudu Bucks to rent this ride.");
+      handleClosePopup();
+      return;
+    }
+
+    axios
+      .post(`https://api-campus-transport.vercel.app/cancel-rent/${UID}/${ritem}`)
+      .then((response) => {
+        // console.log('Rental successful:', response.data);
+        handleHOME();
+        const newKuduBalance = kudu + 10;
+        setKudu(newKuduBalance); // Update the local state
+
+        const userRef = doc(firestore, 'Users', UID);
+        updateDoc(userRef, {
+          kudu: newKuduBalance,
+        })
+        .then(() => {
+          console.log('Kudu Bucks updated successfully in Firestore.');
+        })
+        .catch((error) => {
+          console.error('Error updating Kudu Bucks in Firestore:', error);
+          alert('Error updating Kudu Bucks.');
+        });
+
+        alert('Rental cancelation successful!');
+        handleClosePopup();
+      })
+      .catch((error) => {
+        console.error('Error canceling rental:', error);
+        alert('Error canceling rental.');
+      });
+  };
+
+
+  const handleCancel = () => {
+    setUserData(null);
+  };
+
+  // const handleRentClick = () => {
+  //   setShowPopup(true);
+  // };
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const getKuduColor = (kudu) => {
+    if (kudu >= 70) {
+      return 'green';
+    } else if (kudu >= 20) {
+      return `rgb(${255 - (kudu - 20) * 2}, 255, 0)`; // Gradually decrease red component
+    } else {
+      return `rgb(255, ${(kudu / 20) * 255}, 0)`; 
     }
   };
 
@@ -80,27 +172,10 @@ const Profile = () => {
                     Change password
                   </a>
                 </div>
-                <div className="progress-container">
-                  <div className="progress-bar">
-                    <div className="progress" style={{ width: "60%" }}></div>
-                  </div>
-                  <span>
-                    <p className="credits">40/60 KuduBucks</p>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {!showForgotPassword ? (
-              <>
-                {/* Profile Stats */}
+                 {/* Profile Stats */}
                 <div className="profile-stats">
                   <div className="stat-item">
-                    <h3>2</h3>
-                    <p>Rented vehicles</p>
-                  </div>
-                  <div className="stat-item">
-                    <h3>40</h3>
+                    <h3 style={{ color: getKuduColor(kudu) }}>{kudu}</h3>
                     <p>KuduBucks</p>
                   </div>
                   <div className="stat-item">
@@ -108,18 +183,41 @@ const Profile = () => {
                     <p>Vehicles Available</p>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {!showForgotPassword ? (
+              <>
+                {/* Profile Stats
+                <div className="profile-stats">
+                  <div className="stat-item">
+                    <h3>{kudu}</h3>
+                    <p>KuduBucks</p>
+                  </div>
+                  <div className="stat-item">
+                    <h3>23</h3>
+                    <p>Vehicles Available</p>
+                  </div>
+                </div> */}
                 <div className="divider"></div>
                 <div className="rent-history">
-                  <h4>Rent History</h4>
-                  <p className="rentinfo">
-                    24/09/2024 - Rented a bicycle(BikeID) at FNB
-                  </p>
-                  <p className="rentinfo">
-                    24/09/2024 - Rented a bicycle at FNB
-                  </p>
-                  <p className="rentinfo">
-                    24/09/2024 - Rented a bicycle at FNB
-                  </p>
+                  <h4>Current Rental</h4>
+                  <div className="bicycle-item">
+                    <h3>{userData && userData.item ? userData.item : 'No current rental'}</h3>
+                    <p>
+                      Pickup: {userData && userData.location ? userData.location : 'No pickup available'}
+                    </p>
+
+                    {/* Only show the cancel button if the user has a current rental */}
+                    {userData && userData.item && userData.location && (
+                      <a
+                        className="cancel-link"
+                        onClick={() => cancelRent(userData.item)}
+                      >
+                        Cancel Rental
+                      </a>
+                    )}
+                  </div>
                 </div>
               </>
             ) : (
@@ -143,6 +241,29 @@ const Profile = () => {
                 </form>
               </>
             )}
+
+            {showPopup && (
+            <div className="popup-overlay">
+              <div className="popup-content">
+                <h4>Cancel Rental</h4>
+                <p>
+                  Are you sure you want to cancel this item? <br />
+                </p>
+                  <button 
+                  className="cancelBtn" 
+                  // onClick={handleClosePopup}
+                    // className="rentBtn" 
+                     onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
+                
+
+                <button className="closeBtn" onClick={handleClosePopup}>Close</button>
+              </div>
+            </div>
+          )}
+           
           </div>
         </div>
       </div>

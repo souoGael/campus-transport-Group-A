@@ -7,10 +7,10 @@
   background-color: white;
   border-radius: 10px;
   padding: 20px;
-  margin-top: 7vh;
-  margin-left: 20%;
+  margin-top: 3vh;
+  margin-left: 3%;
   width: 1000px;
-  height: 600px;
+  height: 700px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
 }
@@ -18,6 +18,7 @@
 .profile-header {
   display: flex;
   align-items: center;
+  margin-bottom: 5%;
 }
 
 .profile-picture img {
@@ -28,14 +29,10 @@
 }
 
 .profile-info {
+  margin-top: 10%;
   flex-grow: 1;
 }
 
-.progress-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
 
 .progress-bar {
   background-color: #e0e0e0;
@@ -71,6 +68,7 @@
 }
 
 .rent-history h4 {
+
   margin-bottom: 5px;
 }
 
@@ -101,9 +99,9 @@ h2 {
 
 .divider {
   background-color: #e0e0e0;
-  width: 800px;
+  width: 700px;
   height: 5px;
-  margin-left: 130px;
+  margin-left: 190px;
   margin-bottom: -25px;
 }
 
@@ -139,4 +137,25 @@ h2 {
   color: white;
   font-weight: 20px;
   margin: 15px 0px;
+}
+
+.cancelBtn{
+  width: 50px;
+  margin: 10px;
+  height: 30px;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+}
+
+.cancel-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.cancel-link:hover {
+  cursor: pointer; /* Change cursor to pointer on hover */
 }

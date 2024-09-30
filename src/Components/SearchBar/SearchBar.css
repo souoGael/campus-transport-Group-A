@@ -10,7 +10,6 @@
 }
 
 .search-icon {
-  margin-left: 15px;
   margin-right: 20px;
   font-size: 18px;
   color: #888;
@@ -79,4 +78,39 @@
 /* Hide page content when dropdown is visible */
 .content-hidden {
   display: none;
+}
+
+.search-result-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 15px;
+  margin-top: 15px;
+  width: 500px;
+  height: 600px;
+  padding-left: 80px;
+}
+
+.search-icon-button {
+  background-color: #ffffff;
+  width: 22px;
+  margin-top: 3px;
+  margin-right: 15px;
+  border-radius: 20px;
+  border-style: none;
+}
+
+.search-description-image {
+  max-width: 350px; /* Ensure image doesn't overflow the container */
+  height: 250px;
+  margin-top: 25px;
+  border-radius: 15px;
+}
+
+.description1 {
+  margin-top: 50px;
+  margin-right: 60px;
+}
+
+.header1 {
+  margin-left: 40px;
 }
