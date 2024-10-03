@@ -1,127 +1,129 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SearchBar.css";
 import { FaSearch } from "react-icons/fa";
 import { MdClear } from "react-icons/md";
+import { firestore } from "../../utils/firebase"; // Correct import
+import { collection, getDocs } from "firebase/firestore";
 
-const SearchBar = () => {
+const SearchBar = ({ onQueryChange }) => {
   const [query, setQuery] = useState("");
-  const [recentSearches, setRecentSearches] = useState([
-    "MSL",
-    "The Matrix",
-    "Solomon Mahlangu",
-    "Great Hall",
-  ]); // Example recent searches
-  const [showDropdown, setShowDropdown] = useState(false); // For controlling the dropdown visibility
-  const [descriptionData, setDescriptionData] = useState(false); // State for displaying search result
+  const [recentSearches, setRecentSearches] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [descriptionData, setDescriptionData] = useState(null);
+  const [buildings, setBuildings] = useState([]);
+  const [filteredSearches, setFilteredSearches] = useState([]);
   const navigate = useNavigate();
-  const hide = document.querySelector(".turn-by-turn");
 
-  const searchDescriptions = {
-    MSL: {
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXNUEk8yHGxhMEEZgxHAg2RP0ko2BRQlrcVeSoe7GZ1KkVRXwJchwmRCpS6rvID18EsbI&usqp=CAU",
-      text: "MSL stands for Mars Science Laboratory, a NASA mission that successfully landed the Curiosity rover on Mars in 2012.",
-    },
-    "The Matrix": {
-      text: "The Matrix is a 1999 science fiction film directed by the Wachowskis, depicting a dystopian future where humanity is unknowingly trapped inside a simulated reality.",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCL7CyPRgbx1mbh8cNN4Cu-2sMMg4ca8YdNw&s",
-    },
-    "Solomon Mahlangu": {
-      text: "Solomon Mahlangu was a South African struggle icon, executed in 1979 at the age of 22 for his fight against apartheid.",
-      image: "https://example.com/mahlangu-image.jpg",
-    },
-    "Great Hall": {
-      text: "The Great Hall is a significant venue at universities, often used for ceremonies and events like graduations and exams.",
-      image: "https://example.com/greathall-image.jpg",
-    },
-  };
+  useEffect(() => {
+    // Fetch building data from Firestore
+    const fetchBuildings = async () => {
+      try {
+        const snapshot = await getDocs(collection(firestore, "Buildings"));
+        let buildingsData = [];
+        snapshot.forEach((doc) => {
+          buildingsData.push({ id: doc.id, ...doc.data() }); // Use document ID as the building name
+        });
+        setBuildings(buildingsData);
+      } catch (error) {
+        // console.error("Error fetching buildings:", error);
+      }
+    };
+
+    fetchBuildings();
+  }, []);
 
   const handleInputChange = (event) => {
-    setQuery(event.target.value);
-    setDescriptionData(null);
+    const value = event.target.value;
+    setQuery(value);
+    onQueryChange(value);
+
+    if (value.trim() !== "") {
+      // Filter buildings based on query
+      const filtered = buildings.filter(
+        (building) =>
+          building.id.toLowerCase().includes(value.toLowerCase()) ||
+          (building["other-names"] &&
+            building["other-names"].toLowerCase().includes(value.toLowerCase()))
+      );
+      setFilteredSearches(filtered);
+      setShowDropdown(true);
+    } else {
+      setFilteredSearches([]);
+      setShowDropdown(false);
+    }
   };
 
   const handleClearClick = () => {
     setQuery("");
     setDescriptionData(null);
+    setShowDropdown(false);
+    setFilteredSearches([]);
+    onQueryChange("");
   };
 
   const handleSearch = (event) => {
     event.preventDefault();
-    console.log("Searching for:", query);
+    const lowerQuery = query.toLowerCase();
 
-    const lowerQuery = query.toLowerCase(); // Convert query to lowercase for searching
-
-    // Add the search term to recent searches if it's not already in the list
-    const matchedDescription =
-      searchDescriptions[
-        Object.keys(searchDescriptions).find(
-          (key) => key.toLowerCase() === lowerQuery
-        )
-      ];
-
-    setDescriptionData(
-      matchedDescription || { text: "No description available for this search.", image: null }
+    const matchedBuilding = buildings.find(
+      (building) =>
+        building.id.toLowerCase() === lowerQuery ||
+        (building["other-names"] &&
+          building["other-names"].toLowerCase() === lowerQuery)
     );
 
-    if (query && !recentSearches.some((term) => term.toLowerCase() === lowerQuery)) {
-      setRecentSearches([query, ...recentSearches]);
-    }
+    if (matchedBuilding) {
+      setDescriptionData({
+        text: matchedBuilding.description || "No description available",
+        image: matchedBuilding.image || null,
+        side: matchedBuilding.side || "No side information",
+        link: `https://www.google.com/maps?q=${matchedBuilding.latitude},${matchedBuilding.longitude}`,
+      });
 
-    setDescriptionData(
-      searchDescriptions[query] || {
+      // Add to recent searches if not already present
+      if (!recentSearches.some((term) => term.toLowerCase() === lowerQuery)) {
+        setRecentSearches([matchedBuilding.id, ...recentSearches]);
+      }
+    } else {
+      setDescriptionData({
         text: "No description available for this search.",
         image: null,
-      }
-    );
-
-    setShowDropdown(false); // Close the dropdown after searching
-    const hide = document.querySelector(".turn-by-turn");
-    if (hide) {
-      hide.style.display = "block";
+      });
     }
+
+    setShowDropdown(false);
   };
 
   const handleFocus = () => {
-    setShowDropdown(true); // Show the dropdown when focused
-    const hide = document.querySelector(".turn-by-turn");
-    if (hide) {
-      hide.style.display = "none";
+    if (query.trim() !== "") {
+      setShowDropdown(true);
     }
   };
 
   const handleSearchSelect = (searchTerm) => {
-    setQuery(searchTerm); // Set the original case of the selected term
-    setShowDropdown(false); // Hide the dropdown after selecting a search
-    const hide = document.querySelector(".turn-by-turn");
-    if (hide) {
-      hide.style.display = "block";
-    }
-    setDescriptionData(
-      searchDescriptions[searchTerm] || {
-        text: "No description available for this search.",
-        image: null,
-      }
-    );
-  };
-
-  const handleBlur = () => {
+    setQuery(searchTerm);
     setShowDropdown(false);
-    const hide = document.querySelector(".turn-by-turn");
-    if (hide) {
-      hide.style.display = "block";
+
+    const matchedBuilding = buildings.find(
+      (building) =>
+        building.id.toLowerCase() === searchTerm.toLowerCase() ||
+        (building["other-names"] &&
+          building["other-names"].toLowerCase() === searchTerm.toLowerCase())
+    );
+
+    if (matchedBuilding) {
+      setDescriptionData({
+        text: matchedBuilding.description || "No description available",
+        image: matchedBuilding.image || null,
+        side: matchedBuilding.side || "No side information",
+        link: `https://www.google.com/maps?q=${matchedBuilding.latitude},${matchedBuilding.longitude}`,
+      });
     }
   };
-
-  // Filter recent searches based on the query (case-insensitive)
-  const filteredSearches = recentSearches.filter((search) =>
-    search.toLowerCase().includes(query.toLowerCase())
-  );
 
   return (
-    <div className="search-bar-container" onBlur={handleBlur}>
+    <div className="search-bar-container">
       <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
@@ -138,22 +140,23 @@ const SearchBar = () => {
         {query && <MdClear className="clear-icon" onClick={handleClearClick} />}
       </form>
 
-      {/* Full-screen overlay to hide page content when dropdown is visible */}
-      {showDropdown && (
+      {query.trim() !== "" && showDropdown && filteredSearches.length > 0 && (
         <div className="overlay">
           <ul className="recent-searches-dropdown">
-            {filteredSearches.map((search, index) => (
+            {filteredSearches.map((building, index) => (
               <li
                 key={index}
                 className="recent-search-item"
-                onClick={() => handleSearchSelect(search)}
+                onClick={() => handleSearchSelect(building.id)}
+                tabIndex={0}
               >
-                {search}
+                {building.id}
               </li>
             ))}
           </ul>
         </div>
       )}
+
       {descriptionData && (
         <div className="overlay">
           <div className="search-result-card">
@@ -166,11 +169,21 @@ const SearchBar = () => {
               />
             )}
             <p className="description1">{descriptionData.text}</p>
+            <p className="description1">Side: {descriptionData.side}</p>
+            {descriptionData.link && (
+              <a
+                href={descriptionData.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Get Directions
+              </a>
+            )}
           </div>
         </div>
       )}
     </div>
   );
 };
-//hello
+
 export default SearchBar;

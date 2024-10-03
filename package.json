@@ -10,11 +10,13 @@
     "@testing-library/user-event": "^13.5.0",
     "@turf/turf": "^7.1.0",
     "axios": "^1.7.7",
+    "axios-mock-adapter": "^2.0.0",
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.5.0",
     "html2canvas": "^1.4.1",
+    "jest": "^27.5.1",
     "jspdf": "^2.5.2",
     "mapbox-gl": "^3.6.0",
     "react": "^18.3.1",
@@ -24,12 +26,13 @@
     "react-router-dom": "^6.26.1",
     "react-scripts": "^5.0.1",
     "react-toastify": "^10.0.5",
+    "supertest": "^7.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "CI=false react-scripts build",
-    "test": "echo \"No tests specified\"",
+    "test": "react-scripts test --detectOpenHandles",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -55,5 +58,32 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@testing-library/react": "^16.0.1",
     "concurrently": "^9.0.1"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest",
+      "^.+\\.tsx?$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!(axios)/)"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less|sass|scss)$": "identity-obj-proxy",
+      "jspdf": "<rootDir>/__mocks__/jspdf.js",
+      "html2canvas": "<rootDir>/__mocks__/html2canvas.js"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/serviceWorker.js",
+      "!src/Components/Map/BuildingMap.jsx",
+      "!**/node_modules/**",
+      "!**/__mocks__/**"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "clover"
+    ]
   }
 }

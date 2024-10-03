@@ -63,6 +63,8 @@
   list-style: none;
   padding: 10px;
   margin: 0;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .recent-search-item {
@@ -87,6 +89,7 @@
   margin-top: 15px;
   width: 500px;
   height: 600px;
+  overflow-y: auto;
   padding-left: 80px;
 }
 
@@ -113,4 +116,11 @@
 
 .header1 {
   margin-left: 40px;
+}
+
+@media (max-width: 430px) { /* Mobile, decently sized phones */
+  .search-form {
+    margin: 40px;
+  }
+
 }

@@ -81,3 +81,51 @@
   margin-top: 10px;
   margin-right: 40px;
 }
+
+.filter-buttons button {
+  font-family: "Poppins", sans-serif;
+  margin-right: 10px;
+  height: 30px;
+  background-color: #1D2C4D;
+  border: none;
+  margin-bottom:10px ;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+  font-weight: 20px;
+}
+
+.text-buttons {
+  margin:0px 10px 0px 10px;
+}
+
+.download-button {
+  font-family: "Poppins", sans-serif;
+  height: 30px;
+  background-color: #1D2C4D;
+  border: none;
+  margin-bottom:10px ;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+  font-weight: 20px;
+}
+
+.download-button-text {
+  margin:0px 10px 0px 10px; 
+}
+
+@media (max-width: 430px) { /* Mobile, decently sized phones */
+  .busSearch{
+    left: 0;
+    right: 0;
+  }
+  .bus-schedule-container {
+    margin: 100px 10px 0px 10px;
+  }
+
+}

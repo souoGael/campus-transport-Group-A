@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "./BusSchedule.css";
 import SideMenu from "../SideMenu/SideMenu";
 import SearchBar from "../SearchBar/SearchBar";
+import Popup from '../EmergencyAlert/EmergencyAlert.jsx';
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
@@ -34,7 +35,6 @@ const Busschedule = () => {
         }));
         setBuses(busSchedules);
       } catch (error) {
-        console.error("Error fetching bus schedules:", error);
       }
     };
 
@@ -124,6 +124,7 @@ const Busschedule = () => {
           <SideMenu />
           <div>
             <SearchBar id="busSearch" />
+            <Popup />
             <div className="bus-schedule-container">
               <h2 className="BUs">Bus Schedule</h2>
               <div className="date-time-header">
@@ -136,18 +137,22 @@ const Busschedule = () => {
                 {["ALL", "Full Circuit", "Reverse", "WJ", "NSW | Rosebank", "EOH | KNK", "NSW | WEC", "KNK | Rosebank"].map((route) => (
                   <button
                     key={route}
-                    className={`filter-button ${selectedRoutes.includes(route) ? "active" : ""}`}
+                    className={`routes${selectedRoutes.includes(route) ? "active" : ""}`}
                     onClick={() => handleFilterClick(route)}
-                    style={{ backgroundColor: selectedRoutes.includes(route) ? "green" : "" }}
+                    style={{ backgroundColor: selectedRoutes.includes(route) ? "#304A7D" : "" }}
                   >
+                    <div className="text-buttons">
                     {route}
+                    </div>
                   </button>
                 ))}
               </div>
 
               {/* Download Button */}
               <button className="download-button" onClick={downloadScheduleAsPDF}>
+              <div className="download-button-text">
                 Download Schedule as PDF
+                    </div>
               </button>
 
               {/* Schedule Container */}

@@ -7,8 +7,32 @@
   color: #000;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  position: relative; /* To contain the overlay */
 }
 
+/* .menu-item.active {
+  background-color: rgba(0, 0, 0, 0.1); 
+} */
+
+.menu-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0%;
+  margin-left: 13%;
+  width: 70%;
+  height: 70%;
+  background-color: rgba(7, 16, 95, 0.2); /* Transparent border or box */
+  border-radius: 15px; /* Optional: round the edges */
+  pointer-events: none; /* Prevent this box from affecting clicks */
+}
+
+.menu-item:hover::before,
+.side-menu:hover .menu-item.active::before {
+  opacity: 0; /* Make overlay invisible when the menu is expanded or hovered */
+}
+
+
+/* Hover effect */
 .menu-item:hover {
   background-color: #abbdcf;
 }
@@ -57,18 +81,10 @@ a {
   .menu-text {
     display: none; /* Hide the text completely on mobile */
   }
-  .menu-divider{
+  .menu-divider {
     display: none;
   }
-  .logo{
+  .logo {
     display: none;
   }
 }
-
-
-/* .ProfileIcon{
-width: 40px;
-height: 40px;
-padding: 7px;
-border-radius: 50px;
-} */

@@ -4,6 +4,7 @@ import SideMenu from "../SideMenu/SideMenu";
 import SearchBar from "../SearchBar/SearchBar";
 import { auth, firestore } from '../../utils/firebase.js';
 import { doc, getDoc, updateDoc} from "firebase/firestore";
+import Popup from '../EmergencyAlert/EmergencyAlert.jsx';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import BuildingMap from "../Map/BuildingMap.jsx";
@@ -142,6 +143,7 @@ const Rentals = () => {
           <SideMenu />
           <div>
             <SearchBar />
+            <Popup />
             <div className="bicycle-list" id="rentalsWidth">
               {rental.map((i, index) => (
                 <div className="bicycle-item" key={index}>

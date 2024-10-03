@@ -1,9 +1,24 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { MapStyle } from "./MapStyle";
+import axios from 'axios';
+import { auth, firestore } from '../../utils/firebase.js';
+import { doc, getDoc} from "firebase/firestore";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const fallbackLatitude = -26.1893;
 const fallbackLongitude = 28.0271;
+
+let rental = [
+  {"Vehicle":"Bicycle","id":"Bus-Station","lng":28.0282,"location":"Yale Road, AMIC"," availability":10,"lat":-26.1907},
+  {"Vehicle":"Bicycle","id":"rentals","lng":28.025,"location":"WITS Law Lawns","availability":10,"lat":-26.188},
+  {"Vehicle":"Bicycle","id":"rentals3","lng":28.028,"location":"Origin Centre","availability":10,"lat":-26.192},
+  {"Vehicle":"Skateboards","id":"rentals4","lng":28.025,"location":"WITS SCIENCE STADIUM","availability":10,"lat":-26.191},
+  {"Vehicle":"Skateboards","id":"rentals5","lng":28.026,"availability":10,"lat":-26.19,"location":"TW Kambule"},
+  {"Vehicle":"Skateboards","id":"rentals7","lng":28.03,"location":"Mens Halls Of Residence","availability":10,"lat":-26.189},
+  {"Vehicle":"Skateboards","id":"BB","lng":28.036013,"location":"BB","availability":10,"lat":-26.182666}
+]
 
 const BuildingMap = () => {
   const mapRef = useRef(null);
@@ -26,6 +41,90 @@ const BuildingMap = () => {
     return savedStyle ? JSON.parse(savedStyle) : true;
   });
   const mapInstanceRef = useRef(null);
+
+  const [userPickup, setUserPickup] = useState("test");
+  const [UID, setUserId] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in, set the user ID
+        setUserId(user.uid);
+
+        // Fetch user document to check if location and kudu bucks exists
+        const userRef = doc(firestore, 'Users', user.uid);
+        getDoc(userRef).then((docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setUserPickup(userData.location); 
+            // console.log('User location:', userData.location);
+          } else {
+            setUserId(null);
+            setUserPickup(null); 
+            console.log('No user is logged in');
+          }
+        }).catch((error) => {
+          console.error('Error fetching user document:', error);
+        });
+      } else {
+        // User is signed out
+        setUserId(null);
+        setUserPickup(null); // Reset user location
+        console.log('No user is logged in');
+      }
+    });
+
+    // Clean up subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // Radius of the Earth in meters
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in meters
+    return distance;
+  }
+
+  // Handle Rent button click
+  const handleDropOff = (ritem) => {
+    axios
+      .post(`https://api-campus-transport.vercel.app/cancel-rent/${UID}/${ritem}`)
+      .then((response) => {
+        alert('Rental drop-off successful!');
+      })
+      .catch((error) => {
+        console.error('Error dropping off rental:', error);
+        alert('Error dropping off rental.');
+      });
+  };
+
+  function handleDrop(location) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+        const distance = calculateDistance(location.lat, location.lng, userLat, userLng);
+        console.log("Distance to the drop-off location:", distance);
+        if (distance <= 500) {
+          handleDropOff(location.id);
+          // console.log("Drop off successful!");
+          toast.success("Drop off successful!");
+        } else {
+          toast.error("Drop off unsuccessful, too far from the ",location.location," station.");
+        }
+      },
+      (error) => {
+        toast.error("Unable to retrieve your location.");
+      }
+    );
+  }
+
 
   const calculateRoute = useCallback(
     (origin, destination) => {
@@ -144,9 +243,80 @@ const BuildingMap = () => {
     [userLocation, googleMaps, createMarkersAndCalculateRoute]
   );
 
+  console.log('User pickup outside: ', userPickup);
+
+  
+  
+  const addCustomLocationMarkers = useCallback(() => {
+    if (googleMaps && mapInstanceRef.current) {
+      rental.forEach((i) => {
+        if (!i.id || !i.lat || !i.lng || !i.location) {
+          console.error("Invalid rental data:", i);
+          return; // Skip invalid rental data
+        }
+        let icon;
+
+        console.log('User pickup inside: ', userPickup);
+
+        // Define custom icons based on location type
+        switch (i.id) {
+          case "Bus-Station":
+            icon = {
+              url: "https://img.icons8.com/?size=100&id=rbzJQybQmfOt&format=png&color=000000",
+              scaledSize: new googleMaps.maps.Size(50, 50),
+            };
+            break;
+          default:
+            icon = {
+              url: "https://img.icons8.com/?size=100&id=dUCeRJ9NSaDu&format=png&color=000000",
+              scaledSize: new googleMaps.maps.Size(50, 50),
+            };
+        }
+
+
+        const marker = new googleMaps.maps.Marker({
+          position: { lat: i.lat, lng: i.lng },
+          map: mapInstanceRef.current,
+          icon: icon,
+          title: i.name,
+        });
+
+        // Create an info window for each marker
+        const infoWindow = new googleMaps.maps.InfoWindow({
+          content: `<div>
+                      <h3>${i.id}</h3>
+                      <p>Lat: ${i.lat}, Lng: ${i.lng}</p>
+                      <button 
+                        id="dropOffButton-${i.id}" 
+                      >
+                        Drop-Off rentals
+                      </button>
+                    </div>`,
+        });
+
+        // Add click listener to open info window
+        marker.addListener("click", () => {
+          infoWindow.open(mapInstanceRef.current, marker);
+        });
+
+        // Listen for the 'domready' event to attach the click handler to the button
+      googleMaps.maps.event.addListener(infoWindow, 'domready', () => {
+        const dropOffButton = document.getElementById(`dropOffButton-${i.id}`);
+        if (dropOffButton) {
+          dropOffButton.addEventListener("click", () => {
+            console.log(`Drop-Off clicked for ${i.id}`);
+            handleDrop(i);
+          });
+        }
+      });
+
+      });
+    }
+  }, [googleMaps, userPickup]);
+
   useEffect(() => {
     const loader = new Loader({
-      apiKey: process.env.GOOGLE_MAP_API,
+      apiKey: "AIzaSyB5e2jgdvOEoj4mykJDY-HUDrtW7-NJXUI",
       version: "weekly",
       libraries: ["places"],
     });
@@ -229,6 +399,8 @@ const BuildingMap = () => {
 
       loadPersistedRoute();
 
+      addCustomLocationMarkers();
+
       mapInstanceRef.current.addListener("click", (e) =>
         calculateAndDisplayRoute(e.latLng)
       );
@@ -239,15 +411,14 @@ const BuildingMap = () => {
     calculateAndDisplayRoute,
     isDarkStyle,
     loadPersistedRoute,
+    addCustomLocationMarkers,
   ]);
 
-  // Function to toggle the map style
   const toggleMapStyle = () => {
     setIsDarkStyle((prevIsDarkStyle) => {
       const newIsDarkStyle = !prevIsDarkStyle;
       localStorage.setItem("isDarkStyle", JSON.stringify(newIsDarkStyle));
 
-      // Update map style immediately
       if (mapInstanceRef.current && googleMaps) {
         mapInstanceRef.current.setOptions({
           styles: newIsDarkStyle ? MapStyle : [],
@@ -258,7 +429,6 @@ const BuildingMap = () => {
     });
   };
 
-  // Function to recenter the map to the user's current location
   const recenterMapToUserLocation = () => {
     if (mapInstanceRef.current && userLocation) {
       mapInstanceRef.current.panTo(userLocation);
@@ -346,8 +516,8 @@ const BuildingMap = () => {
             Recenter Map
           </button>
 
-          <p>Distance:{directions.distance.text}</p>
-          <p>Duration:{directions.duration.text}</p>
+          <p>Distance: {directions.distance.text}</p>
+          <p>Duration: {directions.duration.text}</p>
 
           <ol style={{ paddingLeft: "30px" }}>
             {directions.steps.map((step, index) => (
