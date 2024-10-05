@@ -185,7 +185,7 @@ const BuildingMap = () => {
           handleDropOff(location.id);
           toast.success("Drop off successful!");
         } else {
-          // alert(`Drop off unsuccessful, too far from the, ${location.id}`)
+          alert(`Drop off unsuccessful, too far from the, ${location.id}`);
           toast.error(
             `Drop off unsuccessful, too far from the, ${location.id}`
           );
