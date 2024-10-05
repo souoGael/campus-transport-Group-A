@@ -28,7 +28,43 @@
   flex-direction: column;
   margin-left: 30px;
   overflow-y: auto;
-  max-height: 70vh;
+  max-height: 100vh;
+  transition: max-width 0.4s ease, opacity 0.4s ease;
+}
+
+.bicycle-list.collapsed {
+  max-width: 0;
+  opacity: 0;
+}
+
+.rent-expand-button {
+  position:absolute;
+  top: 45%;
+  background-color: #1d2c4d;
+  color: white;
+  border: 2px solid white;
+  border-radius: 10px;
+  width: 30px;
+  height: 80px;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+}
+
+
+.rent-expand-button.collapsed {
+  transform: rotate(0deg);
+}
+
+.rent-expand-button.rent-expand-buttonexpanded {
+  transform: rotate(180deg);
+}
+
+.bicycle-list::-webkit-scrollbar {
+  display: none;
 }
 
 .bicycle-item {
@@ -89,10 +125,94 @@
 }
 
 .rentBtn {
-  width: 50px;
-  margin: 10px;
+  font-family: "Poppins", sans-serif;
   height: 30px;
-  border-radius: 5px;
-  background-color: #007bff;
+  background-color: #1D2C4D;
+  border: none;
+  margin:10px 5px 10px 10px;
+  width: 60px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
   color: white;
+  font-weight: 20px;
+}
+
+.closeBtn {
+  font-family: "Poppins", sans-serif;
+  height: 30px;
+  background-color: #1D2C4D;
+  border: none;
+  margin:10px 10px 10px 5px;
+  width: 60px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+  font-weight: 20px;
+}
+
+
+
+@media (max-width: 430px) { /* Mobile, decently sized phones */
+  .bicycle-list {
+    margin-top: 90px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .rent-expand-button {
+    position:absolute;
+    top: 50%;
+  }
+
+}
+
+@media (max-width: 390px) { /* Mobile, horrendously sized phones */
+  .bicycle-list {
+    width: 85%;
+    margin-top: 90px;
+    max-height: 86vh;
+    overflow-y: auto;
+  }
+
+
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+  color: white;
+  margin-top: 20px;
+  font-size: 18px;
+}
+.details-layout {
+  width: 350px;
 }

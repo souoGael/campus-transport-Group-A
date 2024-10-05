@@ -1,26 +1,34 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { MapStyle } from "./MapStyle";
-import axios from 'axios';
-import { auth, firestore } from '../../utils/firebase.js';
-import { doc, getDoc} from "firebase/firestore";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./BuildingMap.css";
+import { useUserData } from "../../utils/userDataUtils.js";
+import { useNavigate } from "react-router-dom";
+import { auth, firestore } from "../../utils/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 const fallbackLatitude = -26.1893;
 const fallbackLongitude = 28.0271;
 
-let rental = [
-  {"Vehicle":"Bicycle","id":"Bus-Station","lng":28.0282,"location":"Yale Road, AMIC"," availability":10,"lat":-26.1907},
-  {"Vehicle":"Bicycle","id":"rentals","lng":28.025,"location":"WITS Law Lawns","availability":10,"lat":-26.188},
-  {"Vehicle":"Bicycle","id":"rentals3","lng":28.028,"location":"Origin Centre","availability":10,"lat":-26.192},
-  {"Vehicle":"Skateboards","id":"rentals4","lng":28.025,"location":"WITS SCIENCE STADIUM","availability":10,"lat":-26.191},
-  {"Vehicle":"Skateboards","id":"rentals5","lng":28.026,"availability":10,"lat":-26.19,"location":"TW Kambule"},
-  {"Vehicle":"Skateboards","id":"rentals7","lng":28.03,"location":"Mens Halls Of Residence","availability":10,"lat":-26.189},
-  {"Vehicle":"Skateboards","id":"BB","lng":28.036013,"location":"BB","availability":10,"lat":-26.182666}
-]
-
 const BuildingMap = () => {
+
+  // Comment line 25-28 in order to remove the ESLINT errors
+  // if (process.env.NODE_ENV === 'test') {
+  //   return null;
+  // }
+
+  const navigate = useNavigate();
+  const handleProfile = () => {
+    navigate("/Profile");
+  };
+
+  const { userData, userId, refetchUserData } = useUserData();
+  const [rental, setRentals] = useState([]);
+  const [events, setEvents] = useState([]);
+
   const mapRef = useRef(null);
   const [googleMaps, setGoogleMaps] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
@@ -41,66 +49,123 @@ const BuildingMap = () => {
     return savedStyle ? JSON.parse(savedStyle) : true;
   });
   const mapInstanceRef = useRef(null);
-
-  const [userPickup, setUserPickup] = useState("test");
-  const [UID, setUserId] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in, set the user ID
-        setUserId(user.uid);
-
-        // Fetch user document to check if location and kudu bucks exists
-        const userRef = doc(firestore, 'Users', user.uid);
-        getDoc(userRef).then((docSnap) => {
-          if (docSnap.exists()) {
-            const userData = docSnap.data();
-            setUserPickup(userData.location); 
-            // console.log('User location:', userData.location);
-          } else {
-            setUserId(null);
-            setUserPickup(null); 
-            console.log('No user is logged in');
-          }
-        }).catch((error) => {
-          console.error('Error fetching user document:', error);
-        });
-      } else {
-        // User is signed out
-        setUserId(null);
-        setUserPickup(null); // Reset user location
-        console.log('No user is logged in');
-      }
-    });
-
-    // Clean up subscription on unmount
-    return () => unsubscribe();
-  }, []);
+  const [selectedCoordinates, setSelectedCoordinates] = useState(null);
 
   function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371000; // Radius of the Earth in meters
     const dLat = (lat2 - lat1) * (Math.PI / 180);
     const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a = 
+    const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c; // Distance in meters
     return distance;
   }
 
+  useEffect(() => {
+    // Fetch building data only once, store it in localStorage
+    const fetchBuildings = async () => {
+      try {
+        // Check if buildings data already exists in localStorage
+        const storedBuildings = localStorage.getItem("rentalData");
+
+        if (storedBuildings) {
+          // If data exists, use it directly
+          setRentals(JSON.parse(storedBuildings));
+        } else {
+          // If no data, fetch from Firestore
+          const snapshot = await getDocs(collection(firestore, "Rental Station Inventory"));
+          let rentalData = [];
+          snapshot.forEach((doc) => {
+            rentalData.push({ id: doc.id, ...doc.data() }); // Use document ID as the building name
+          });
+
+          // Set the data in state and store it in localStorage
+          setRentals(rentalData);
+          localStorage.setItem("rentalData", JSON.stringify(rentalData));
+        }
+      } catch (error) {
+        console.error("Error fetching rentals:", error);
+      }
+    };
+
+    fetchBuildings();
+
+    // Clean up localStorage on logout
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        // console.log("User logged out. Clearing localStorage for buildings.");
+        localStorage.removeItem("rentalData");
+      }
+    });
+
+    // Clean up the auth subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+
+  useEffect(() => {
+    // Fetch building data only once, store it in localStorage
+    const fetchBuildings = async () => {
+      try {
+        // Check if buildings data already exists in localStorage
+        const storedBuildings = localStorage.getItem("eventsData");
+
+        if (storedBuildings) {
+          // If data exists, use it directly
+          setEvents(JSON.parse(storedBuildings));
+        } else {
+          // If no data, fetch from Firestore
+          const snapshot = await getDocs(collection(firestore, "Events"));
+          let eventsData = [];
+          snapshot.forEach((doc) => {
+            eventsData.push({ id: doc.id, ...doc.data() }); // Use document ID as the building name
+          });
+
+          // Set the data in state and store it in localStorage
+          setEvents(eventsData);
+          localStorage.setItem("eventsData", JSON.stringify(eventsData));
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
+    fetchBuildings();
+
+    // Clean up localStorage on logout
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        // console.log("User logged out. Clearing localStorage for buildings.");
+        localStorage.removeItem("eventsData");
+      }
+    });
+
+    // Clean up the auth subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+
   // Handle Rent button click
   const handleDropOff = (ritem) => {
     axios
-      .post(`https://api-campus-transport.vercel.app/cancel-rent/${UID}/${ritem}`)
+      .post(
+        `https://api-campus-transport.vercel.app/cancel-rent/${userId}/${ritem}`
+      )
       .then((response) => {
-        alert('Rental drop-off successful!');
+        alert("Rental drop-off successful!");
+
+        sessionStorage.removeItem("userData"); // Clear sessionStorage, and the cosole that appers in rentals in for the profile being stored
+        refetchUserData();
+        handleProfile();
       })
       .catch((error) => {
-        console.error('Error dropping off rental:', error);
-        alert('Error dropping off rental.');
+        console.error("Error dropping off rental:", error);
+        alert("Error dropping off rental.");
       });
   };
 
@@ -109,14 +174,21 @@ const BuildingMap = () => {
       (position) => {
         const userLat = position.coords.latitude;
         const userLng = position.coords.longitude;
-        const distance = calculateDistance(location.lat, location.lng, userLat, userLng);
+        const distance = calculateDistance(
+          location.lat,
+          location.lng,
+          userLat,
+          userLng
+        );
         console.log("Distance to the drop-off location:", distance);
         if (distance <= 500) {
           handleDropOff(location.id);
-          // console.log("Drop off successful!");
           toast.success("Drop off successful!");
         } else {
-          toast.error("Drop off unsuccessful, too far from the ",location.location," station.");
+          // alert(`Drop off unsuccessful, too far from the, ${location.id}`)
+          toast.error(
+            `Drop off unsuccessful, too far from the, ${location.id}`
+          );
         }
       },
       (error) => {
@@ -124,7 +196,6 @@ const BuildingMap = () => {
       }
     );
   }
-
 
   const calculateRoute = useCallback(
     (origin, destination) => {
@@ -243,10 +314,6 @@ const BuildingMap = () => {
     [userLocation, googleMaps, createMarkersAndCalculateRoute]
   );
 
-  console.log('User pickup outside: ', userPickup);
-
-  
-  
   const addCustomLocationMarkers = useCallback(() => {
     if (googleMaps && mapInstanceRef.current) {
       rental.forEach((i) => {
@@ -255,8 +322,6 @@ const BuildingMap = () => {
           return; // Skip invalid rental data
         }
         let icon;
-
-        console.log('User pickup inside: ', userPickup);
 
         // Define custom icons based on location type
         switch (i.id) {
@@ -273,7 +338,6 @@ const BuildingMap = () => {
             };
         }
 
-
         const marker = new googleMaps.maps.Marker({
           position: { lat: i.lat, lng: i.lng },
           map: mapInstanceRef.current,
@@ -288,6 +352,7 @@ const BuildingMap = () => {
                       <p>Lat: ${i.lat}, Lng: ${i.lng}</p>
                       <button 
                         id="dropOffButton-${i.id}" 
+                      
                       >
                         Drop-Off rentals
                       </button>
@@ -300,23 +365,90 @@ const BuildingMap = () => {
         });
 
         // Listen for the 'domready' event to attach the click handler to the button
-      googleMaps.maps.event.addListener(infoWindow, 'domready', () => {
-        const dropOffButton = document.getElementById(`dropOffButton-${i.id}`);
-        if (dropOffButton) {
-          dropOffButton.addEventListener("click", () => {
-            console.log(`Drop-Off clicked for ${i.id}`);
-            handleDrop(i);
-          });
-        }
-      });
+        googleMaps.maps.event.addListener(infoWindow, "domready", () => {
+          const dropOffButton = document.getElementById(
+            `dropOffButton-${i.id}`
+          );
+          if (dropOffButton) {
+            // Disable button if userLocation is null
+            if (!userData.location) {
+              dropOffButton.disabled = true;
+            } else {
+              dropOffButton.disabled = false;
+            }
 
+            dropOffButton.addEventListener("click", () => {
+              handleDrop(i);
+            });
+          }
+        });
       });
     }
-  }, [googleMaps, userPickup]);
+  }, [googleMaps, userData.location, rental]);
+
+  const addCustomLocationMarkers1 = useCallback(() => {
+    if (googleMaps && mapInstanceRef.current) {
+      events.forEach((i) => {
+        if (!i.id || !i.lat || !i.lng || !i.location) {
+          console.error("Invalid rental data:", i);
+          return; // Skip invalid rental data
+        }
+        let icon;
+
+        // Define custom icons based on location type
+        switch (i.id) {
+          default:
+            icon = {
+              url: "https://img.icons8.com/?size=100&id=Ib6dAoXkBweM&format=png&color=000000",
+              scaledSize: new googleMaps.maps.Size(50, 50),
+            };
+        }
+
+        const marker = new googleMaps.maps.Marker({
+          position: { lat: i.lat, lng: i.lng },
+          map: mapInstanceRef.current,
+          icon: icon,
+          title: i.name,
+        });
+
+        // Create an info window for each marker
+        const infoWindow = new googleMaps.maps.InfoWindow({
+          content: `<div>
+                      <h3>${i.id}</h3>
+                      <p>${i.description}</p>
+                    </div>`,
+        });
+
+        // Add click listener to open info window
+        marker.addListener("click", () => {
+          infoWindow.open(mapInstanceRef.current, marker);
+        });
+
+        // Listen for the 'domready' event to attach the click handler to the button
+        googleMaps.maps.event.addListener(infoWindow, "domready", () => {
+          const dropOffButton = document.getElementById(
+            `dropOffButton-${i.id}`
+          );
+          if (dropOffButton) {
+            // Disable button if userLocation is null
+            if (!userData.location) {
+              dropOffButton.disabled = true;
+            } else {
+              dropOffButton.disabled = false;
+            }
+
+            dropOffButton.addEventListener("click", () => {
+              handleDrop(i);
+            });
+          }
+        });
+      });
+    }
+  }, [googleMaps, userData.location, events]);
 
   useEffect(() => {
     const loader = new Loader({
-      apiKey: "AIzaSyB5e2jgdvOEoj4mykJDY-HUDrtW7-NJXUI",
+      apiKey: "API KEY HERE",
       version: "weekly",
       libraries: ["places"],
     });
@@ -401,6 +533,8 @@ const BuildingMap = () => {
 
       addCustomLocationMarkers();
 
+      addCustomLocationMarkers1();
+
       mapInstanceRef.current.addListener("click", (e) =>
         calculateAndDisplayRoute(e.latLng)
       );
@@ -412,6 +546,7 @@ const BuildingMap = () => {
     isDarkStyle,
     loadPersistedRoute,
     addCustomLocationMarkers,
+    addCustomLocationMarkers1
   ]);
 
   const toggleMapStyle = () => {
@@ -435,100 +570,121 @@ const BuildingMap = () => {
     }
   };
 
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const toggleBar = () => {
+    setIsCollapsed((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (
+      selectedCoordinates &&
+      googleMaps &&
+      mapInstanceRef.current &&
+      userLocation
+    ) {
+      const destinationLatLng = new googleMaps.maps.LatLng(
+        selectedCoordinates.latitude,
+        selectedCoordinates.longitude
+      );
+      calculateAndDisplayRoute(destinationLatLng);
+    }
+  }, [
+    selectedCoordinates,
+    googleMaps,
+    mapInstanceRef,
+    userLocation,
+    calculateAndDisplayRoute,
+  ]);
+
+  const handleGetDirections = useCallback((latitude, longitude) => {
+    setSelectedCoordinates({ latitude, longitude });
+  }, []);
+
+  useEffect(() => {
+    const handleCustomEvent = (event) => {
+      if (event.detail && event.detail.latitude && event.detail.longitude) {
+        handleGetDirections(event.detail.latitude, event.detail.longitude);
+      }
+    };
+
+    window.addEventListener("getDirections", handleCustomEvent);
+
+    return () => {
+      window.removeEventListener("getDirections", handleCustomEvent);
+    };
+  }, [handleGetDirections]);
+
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
       <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
 
       {directions && (
-        <div
-          className="turn-by-turn hidden"
-          style={{
-            position: "absolute",
-            top: "90px",
-            left: "30px",
-            zIndex: "1000",
-            background: "white",
-            padding: "20px",
-            borderRadius: "10px",
-            boxShadow: "0 2px6px rgba(0 ,0 ,0 ,0.3)",
-            maxHeight: "calc(100vh -120px)",
-            overflowY: "auto",
-            minWidth: "300px",
-            maxWidth: "400px",
-          }}
-        >
+        <>
+          <button
+            className={`expand-button ${isCollapsed ? "visible" : "hidden"}`}
+            onClick={toggleBar}
+          >
+            ▶
+          </button>
           <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "10px",
-            }}
+            className={`turn-by-turn hidden ${isCollapsed ? "hiddenBar" : ""}`}
           >
-            <h3 style={{ margin: "0" }}>Directions:</h3>
-            <select
-              value={selectedMode}
-              onChange={(e) => {
-                setSelectedMode(e.target.value);
-                if (directions && originMarker && destinationMarker) {
-                  calculateRoute(
-                    originMarker.getPosition(),
-                    destinationMarker.getPosition()
-                  );
-                }
+            <div className="direc-opt">
+              <h3>Directions:</h3>
+              <select
+                className="selectName"
+                value={selectedMode}
+                onChange={(e) => {
+                  setSelectedMode(e.target.value);
+                  if (directions && originMarker && destinationMarker) {
+                    calculateRoute(
+                      originMarker.getPosition(),
+                      destinationMarker.getPosition()
+                    );
+                  }
+                }}
+              >
+                <option value="WALKING">Walking</option>
+                <option value="DRIVING">Driving</option>
+                <option value="BICYCLING">Bicycling</option>
+                <option value="TRANSIT">Transit</option>
+              </select>
+            </div>
+
+            <button
+              className="colourMode"
+              onClick={toggleMapStyle}
+              style={{
+                backgroundColor: isDarkStyle ? "#aab9c9" : "#1d2c4d",
               }}
-              style={{ padding: "5px" }}
             >
-              <option value="WALKING">Walking</option>
-              <option value="DRIVING">Driving</option>
-              <option value="BICYCLING">Bicycling</option>
-              <option value="TRANSIT">Transit</option>
-            </select>
+              {isDarkStyle ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            </button>
+            <button className="toggle-button" onClick={toggleBar}>
+              {"Collapse Directions"}
+            </button>
+
+            <button
+              className="recenterButton"
+              onClick={recenterMapToUserLocation}
+            >
+              Recenter Map
+            </button>
+
+            <p>Distance: {directions.distance.text}</p>
+            <p>Duration: {directions.duration.text}</p>
+
+            <ol>
+              {directions.steps.map((step, index) => (
+                <li
+                  key={index}
+                  dangerouslySetInnerHTML={{ __html: step.instructions }}
+                  style={{ marginBottom: "10px" }}
+                ></li>
+              ))}
+            </ol>
           </div>
-
-          <button
-            onClick={toggleMapStyle}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "10px",
-              backgroundColor: isDarkStyle ? "#aab9c9" : "#1d2c4d",
-              color: "white",
-              borderRadius: "5px",
-            }}
-          >
-            {isDarkStyle ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          </button>
-
-          <button
-            onClick={recenterMapToUserLocation}
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "10px",
-              backgroundColor: "#4285F4",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Recenter Map
-          </button>
-
-          <p>Distance: {directions.distance.text}</p>
-          <p>Duration: {directions.duration.text}</p>
-
-          <ol style={{ paddingLeft: "30px" }}>
-            {directions.steps.map((step, index) => (
-              <li
-                key={index}
-                dangerouslySetInnerHTML={{ __html: step.instructions }}
-                style={{ marginBottom: "10px" }}
-              ></li>
-            ))}
-          </ol>
-        </div>
+        </>
       )}
     </div>
   );

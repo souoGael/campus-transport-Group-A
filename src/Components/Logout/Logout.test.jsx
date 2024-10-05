@@ -38,6 +38,6 @@ describe('Logout Component', () => {
 
    // Check if navigate was called with "/Homepage"
    expect(mockNavigate).toHaveBeenCalledWith("/Homepage");
-  });
+  }); 
 });
 

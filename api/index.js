@@ -58,7 +58,22 @@ app.get('/getRent', async (req, res) => {
       res.status(500).json({ message: 'Error fetching data', error });
     }
   });
-  
+
+// API route to fetch data from Firestore about rent
+app.get('/getEvents', async (req, res) => {
+  try {
+    const snapshot = await db.collection('Events').get();
+
+    let data = [];
+    snapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching data', error });
+  }
+});
+
 // API route to fetch data from Firestore about main locations
 app.get('/getLocations', async (req, res) => {
   try {
@@ -125,6 +140,7 @@ app.post('/rent/:userId/:item/:location', async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 
 // Cancel Rental
 app.post('/cancel-rent/:userId/:item', async (req, res) => {

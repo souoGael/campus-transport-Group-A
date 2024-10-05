@@ -1,5 +1,139 @@
 .turn-by-turn ol {
   margin-top: 7px;
   overflow-y: auto;
-  max-height: 20vh;
+  max-height: 50vh;
+  padding-left: 30px;
+}
+.toggle-button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: white;
+  border-radius: 5px;
+  background-color: #1d2c4d;
+  cursor: pointer;
+}
+.hiddenBar {
+  transform: translateX(-100%); /* Move out of view */
+  opacity: 0; /* Fade out */
+  pointer-events: none; /* Prevent interaction when hidden */
+}
+
+.expand-button {
+  position: absolute;
+  top: 90px;
+  left: 30px;
+  background-color: #1d2c4d;
+  color: white;
+  border: 2px solid white; 
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px;
+  transition: opacity 0.4s ease;
+}
+
+.expand-button.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.expand-button.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+.turn-by-turn{
+  position: absolute;
+  top: 90px;
+  left: 30px;
+  z-index: 1000;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  min-width: 300px;
+  max-width: 400px;
+  transition: transform 0.4s ease,opacity 0.4s ease;
+}
+
+@media (max-width: 430px) { /* Mobile, decently sized phones */
+  .turn-by-turn{
+    top: 150px;
+    max-width: 370px;
+    width: 85%;
+    max-height: calc(100vh - 180px);
+  }
+  .expand-button {
+    top: 18vh;
+  }
+}
+@media (max-width: 375px) { /* Mobile, horrendously sized phones */
+  .turn-by-turn{
+    top: 150px;
+    max-width: 315px;
+    width: 100%;
+    max-height: calc(100vh - 180px);
+  }
+  .expand-button {
+    top: 24vh;
+  }
+}
+
+.direc-opt {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+h3 {
+  margin:0;
+}
+
+.selectName {
+  padding: 5px;
+}
+
+.colourMode {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: white;
+  border-radius: 5px;
+  background-color: #1d2c4d; /* Default to light mode */
+  cursor: pointer;
+}
+
+/* Dark mode */
+.dark-mode .colourMode {
+  background-color: #aab9c9;
+}
+
+.recenterButton {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #4285F4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  border-top-color: #000;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

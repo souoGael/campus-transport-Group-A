@@ -26,7 +26,7 @@ const Popup = () => {
 
       // Define the specific times when the popup should appear
       const specificTimes = [
-        { hours: 18, minutes: 32 },
+        { hours: 16, minutes: 23 },
         { hours: 6, minutes: 10 }
       ];
 

@@ -18,11 +18,36 @@
   margin-left: 100px;
   padding-top: 30px;
 }
-
-.logout button {
-  width: 80px;
+.yes {
   padding: 5px;
-  margin-top: 25px;
   margin-left: 45px;
+  font-family: "Poppins", sans-serif;
+  height: 30px;
+  background-color: #1D2C4D;
+  border: none;
+  margin:10px 5px 10px 80px;
+  width: 60px;
   border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+  font-weight: 20px;
+}
+
+.No {
+  padding: 5px;
+  margin-left: 45px;
+  font-family: "Poppins", sans-serif;
+  height: 30px;
+  background-color: #1D2C4D;
+  border: none;
+  margin:20px 0px 10px 5px;
+  width: 60px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+  font-weight: 20px;
 }

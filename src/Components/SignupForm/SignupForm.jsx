@@ -20,6 +20,7 @@ const validatePassword = (password) => {
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
   return passwordRegex.test(password);
 };
+const generateRandomKudu = () => Math.floor(Math.random() * 101);
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ const SignUpForm = () => {
       );
       return;
     }
+    const kudu = generateRandomKudu();
     try {
       // Create a new user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
@@ -57,6 +59,7 @@ const SignUpForm = () => {
         firstName: firstName,
         lastName: lastName,
         email: email,
+        kudu: kudu,
       });
 
       toast.success("Account created successfully! Please verify your email.");
