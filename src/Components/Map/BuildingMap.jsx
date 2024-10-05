@@ -448,7 +448,7 @@ const BuildingMap = () => {
 
   useEffect(() => {
     const loader = new Loader({
-      apiKey: "API KEY HERE",
+      apiKey: "AIzaSyAROjvEMtBW9ljbodvZFoNFNCawwVbPalI",
       version: "weekly",
       libraries: ["places"],
     });
