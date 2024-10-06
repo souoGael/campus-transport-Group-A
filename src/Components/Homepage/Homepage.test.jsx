@@ -26,3 +26,4 @@ describe('Homepage Component', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 });
+

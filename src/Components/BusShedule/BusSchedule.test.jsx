@@ -38,6 +38,7 @@ jest.mock("firebase/firestore", () => ({
 
 
 
+
 jest.mock("firebase/auth", () => {
   const originalModule = jest.requireActual("firebase/auth");
   return {

@@ -17,7 +17,6 @@
     "firebase": "^10.13.1",
     "firebase-admin": "^12.5.0",
     "html2canvas": "^1.4.1",
-    "jest": "^27.5.1",
     "jspdf": "^2.5.2",
     "mapbox-gl": "^3.6.0",
     "react": "^18.3.1",
@@ -58,7 +57,8 @@
     "@azure/functions": "^4.5.1",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@testing-library/react": "^16.0.1",
-    "concurrently": "^9.0.1"
+    "concurrently": "^9.0.1",
+    "jest": "^27.5.1"
   },
   "jest": {
     "transform": {

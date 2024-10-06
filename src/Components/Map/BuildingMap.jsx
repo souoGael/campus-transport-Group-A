@@ -25,6 +25,9 @@ const BuildingMap = () => {
     navigate("/Profile");
   };
 
+  const [popupMessage, setPopupMessage] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { userData, userId, refetchUserData } = useUserData();
   const [rental, setRentals] = useState([]);
   const [events, setEvents] = useState([]);
@@ -154,22 +157,25 @@ const BuildingMap = () => {
   const handleDropOff = (ritem) => {
     axios
       .post(
-        `https://api-campus-transport.vercel.app/cancel-rent/${userId}/${ritem}`
+        `https://api-campus-transport.vercel.app/complete-rent/${userId}/${ritem}`
       )
       .then((response) => {
-        alert("Rental drop-off successful!");
-
-        sessionStorage.removeItem("userData"); // Clear sessionStorage, and the cosole that appers in rentals in for the profile being stored
+        setIsLoading(false);
+        setPopupMessage("Rental drop-off successful!");
+        setShowPopup(true);
+        sessionStorage.removeItem("userData");
         refetchUserData();
-        handleProfile();
       })
       .catch((error) => {
+        setIsLoading(false);
         console.error("Error dropping off rental:", error);
-        alert("Error dropping off rental.");
+        setPopupMessage("Error dropping off rental.");
+        setShowPopup(true);
       });
   };
 
   function handleDrop(location) {
+    setIsLoading(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const userLat = position.coords.latitude;
@@ -181,18 +187,18 @@ const BuildingMap = () => {
           userLng
         );
         console.log("Distance to the drop-off location:", distance);
-        if (distance <= 500) {
+        if (distance <= 500) { //change this
           handleDropOff(location.id);
-          toast.success("Drop off successful!");
         } else {
-          alert(`Drop off unsuccessful, too far from the, ${location.id}`);
-          toast.error(
-            `Drop off unsuccessful, too far from the, ${location.id}`
-          );
+          setIsLoading(false);
+          setPopupMessage(`Drop off unsuccessful, too far from ${location.id}`);
+          setShowPopup(true);
         }
       },
       (error) => {
-        toast.error("Unable to retrieve your location.");
+        setIsLoading(false);
+        setPopupMessage("Unable to retrieve your location.");
+        setShowPopup(true)
       }
     );
   }
@@ -350,9 +356,9 @@ const BuildingMap = () => {
           content: `<div>
                       <h3>${i.id}</h3>
                       <p>Lat: ${i.lat}, Lng: ${i.lng}</p>
-                      <button 
+                      <p>Vehicle: ${i.Vehicle}</p>
+                      <button class="dropOffButton"
                         id="dropOffButton-${i.id}" 
-                      
                       >
                         Drop-Off rentals
                       </button>
@@ -445,10 +451,9 @@ const BuildingMap = () => {
       });
     }
   }, [googleMaps, userData.location, events]);
-
   useEffect(() => {
     const loader = new Loader({
-      apiKey: "AIzaSyAROjvEMtBW9ljbodvZFoNFNCawwVbPalI",
+      apiKey: "AIzaSyC30CdF5Bdn3H33Lm9FJ9hQ1O5F9rS3IWY",
       version: "weekly",
       libraries: ["places"],
     });
@@ -614,8 +619,28 @@ const BuildingMap = () => {
     };
   }, [handleGetDirections]);
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setPopupMessage("");
+    navigate("/Profile");
+  };
+
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
+      {isLoading && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <p>Processing drop-off...</p>
+        </div>
+      )}
+       {showPopup && (
+        <div className="popup-overlay-rental">
+          <div className="popup-content-rental">
+            <p>{popupMessage}</p>
+            <button onClick={handleClosePopup}>Close</button>
+          </div>
+        </div>
+      )}
       <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
 
       {directions && (
@@ -689,5 +714,4 @@ const BuildingMap = () => {
     </div>
   );
 };
-
 export default BuildingMap;

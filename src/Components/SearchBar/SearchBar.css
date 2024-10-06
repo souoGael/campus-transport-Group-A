@@ -121,13 +121,42 @@
     margin-top: 70px;
     width: calc(120% - 0px);
   }
+  .search-result-card {
+    width: 380px;
+    height: 680px;
+  }
 }
-
+@media (max-width: 390px) { /* Mobile, horrendously sized phones */
+  .search-form {
+    max-width: 320px;
+    margin-top: 70px;
+    width: 120%;
+  }
+  .search-result-card {
+    width: 340px;
+    margin-left: -10px;
+    height: 670px;
+    overflow-y: auto;
+  }
+  .search-description-image {
+    width: 300px;
+  }
+  
+}
 @media (max-width: 375px) { /* Mobile, horrendously sized phones */
   .search-form {
     max-width: 320px;
     margin-top: 70px;
     width: 120%;
   }
-
+  .search-result-card {
+    width: 340px;
+    margin-left: -10px;
+    height: 500px;
+    overflow-y: auto;
+  }
+  .search-description-image {
+    width: 300px;
+  }
+  
 }

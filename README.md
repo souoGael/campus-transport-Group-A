@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/Organisation-A/Group-A/graph/badge.svg?token=0DBV46TWRG)](https://codecov.io/gh/Organisation-A/Group-A)
+
 # Campus Transportation App
 
 Welcome to the **Campus Transportation App** repository, a part of the Smart Campus System. This project aims to enhance mobility and accessibility on campus by providing efficient navigation and transportation services.

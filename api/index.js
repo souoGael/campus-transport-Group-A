@@ -239,51 +239,6 @@ app.post('/complete-rent/:userId/:item', async (req, res) => {
   }
 });
 
-// Complete Rental
-app.post('/event-rent/:userId/:item', async (req, res) => {
-  const { userId, item } = req.params; // Get userId and item from the request params
-
-  try {
-      // Increment availability
-      const increment = admin.firestore.FieldValue.increment(1);
-
-      // Reference to the rental document
-      const rentalRef = db.collection('Events').doc(item);
-      const rentalDoc = await rentalRef.get();
-
-      if (!rentalDoc.exists) {
-          return res.status(404).json({ message: 'Rental item not found' });
-      }
-
-      // Increment the availability of the rental item
-      await rentalRef.update({
-          availability: increment
-      });
-
-      // Reference to the user document
-      const userRef = db.collection('Users').doc(userId);
-      
-      // Fetch the user document
-      const userDoc = await userRef.get();
-
-      // Check if the user document exists
-      if (!userDoc.exists) {
-          return res.status(404).json({ message: 'User not found' });
-      }
-
-      // Remove the 'item' and 'location' fields from the user's document
-      await userRef.update({
-          item: admin.firestore.FieldValue.delete(),
-          location: admin.firestore.FieldValue.delete()
-      });
-
-      return res.status(200).json({ message: 'Rental cancelled and fields removed successfully' });
-  } catch (error) {
-      console.error('Error cancelling rental: ', error);
-      return res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
 app.listen(3000, () => console.log("Server ready on port 3000."));
 
 module.exports = app;

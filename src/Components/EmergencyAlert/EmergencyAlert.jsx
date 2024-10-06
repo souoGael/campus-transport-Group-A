@@ -3,19 +3,30 @@ import './EmergencyAlert.css'; // Import CSS for styling
 
 const Popup = () => {
   const [showPopup, setShowPopup] = useState(false);
-  const [currentPlace, setCurrentPlace] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
 
-  // List of places
-  const places = [
-    'MSL',
-    'The matrix',
-    'Cafeteria',
-    'Lab 101',
-    'Gymnasium',
-    'Auditorium',
-    'Parking Lot A',
-    'Conference Room B',
-  ];
+  // Function to fetch the first alert from the API
+  const fetchAlert = async () => {
+    try {
+      const response = await fetch('https://polite-pond-04aadc51e.5.azurestaticapps.net/api/alerts');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+
+      // Extract the first alert message
+      const firstAlertKey = Object.keys(data)[0];  // Get the key of the first alert
+      const firstAlert = data[firstAlertKey];      // Access the first alert by key
+
+      // Set the alert message
+      setAlertMessage(firstAlert.message);         // Use the "message" from the first alert
+      setShowPopup(true);                          // Trigger the popup to show the message
+
+    } catch (error) {
+      console.error("Error fetching alerts:", error);
+      setAlertMessage("Error fetching emergency alerts.");
+    }
+  };
 
   useEffect(() => {
     // Function to check the time
@@ -26,7 +37,7 @@ const Popup = () => {
 
       // Define the specific times when the popup should appear
       const specificTimes = [
-        { hours: 16, minutes: 23 },
+        { hours: 16, minutes: 31 },
         { hours: 6, minutes: 10 }
       ];
 
@@ -36,10 +47,7 @@ const Popup = () => {
       );
 
       if (isPopupTime) {
-        // Randomly select a place from the list
-        const randomPlace = places[Math.floor(Math.random() * places.length)];
-        setCurrentPlace(randomPlace);
-        setShowPopup(true);
+        fetchAlert(); // Fetch the alert message when it's popup time
       }
     };
 
@@ -48,7 +56,7 @@ const Popup = () => {
     checkTime(); // Run the check immediately on mount
 
     return () => clearInterval(intervalId);
-  }, [places]);
+  }, []);
 
   const closePopup = () => {
     setShowPopup(false);
@@ -61,7 +69,7 @@ const Popup = () => {
           <div className="popup-content">
             <span className="close" onClick={closePopup}>&times;</span>
             <h2>Emergency Alert 🚨</h2>
-            <p>There's an emergency at {currentPlace}, please evacuate the premises immediately.</p>
+            <p>{alertMessage}</p> {/* Display the fetched alert message */}
           </div>
         </div>
       )}

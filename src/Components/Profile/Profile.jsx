@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import BuildingMap from "../Map/BuildingMap";
 import { useUserData } from '../../utils/userDataUtils.js';
 import { auth, firestore } from "../../utils/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
 
 const Profile = () => {
@@ -28,31 +28,6 @@ const Profile = () => {
  
   const [showLoadKuduPopup, setShowLoadKuduPopup] = useState(false);
   const [selectedBike, setSelectedBike] = useState(null);
-
-  function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371000; // Radius of the Earth in meters
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a = 
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in meters
-    return distance;
-  }
-
-  // Get event rentals
-  // useEffect(() => {
-  //   axios
-  //     .get('https://api-campus-transport.vercel.app/getEvents')
-  //     .then((response) => {
-  //       setEvents(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching data:', error);
-  //     });
-  // }, []);
 
   // Handle Rent button click
   const handleEventRent = (ritem, rent) => {
@@ -91,69 +66,6 @@ const Profile = () => {
         alert('Error renting item.');
       });
   };
-
-  // Handle Rent button click
-  // const handleDrop = (ritem) => {
-  //   axios
-  //     .post(
-  //       `https://api-campus-transport.vercel.app/event-rent/${userId}/${ritem}`
-  //     )
-  //     .then((response) => {
-  //       alert("Rental drop-off successful!");
-
-  //       sessionStorage.removeItem("userData"); // Clear sessionStorage, and the cosole that appers in rentals in for the profile being stored
-  //       refetchUserData();
-  //       handleHOME();
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error dropping off rental:", error);
-  //       alert("Error dropping off rental.");
-  //     });
-  // };
-
-  // // Handle Rent button click
-  // const handleDropOff = (ritem) => {
-  //   axios
-  //     .post(`https://api-campus-transport.vercel.app/cancel-rent/${userId}/${ritem}`)
-  //     .then((response) => {
-  //       alert('Rental drop-off successful!');
-
-  //       sessionStorage.removeItem('userData'); // Clear sessionStorage, and the cosole that appers in rentals in for the profile being stored
-  //       refetchUserData();
-  //       //handleProfile();
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error dropping off rental:', error);
-  //       alert('Error dropping off rental.');
-  //     });
-  // };
-
-  // function handleDrop(location) {
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       const userLat = position.coords.latitude;
-  //       const userLng = position.coords.longitude;
-  //       const distance = calculateDistance(location.lat, location.lng, userLat, userLng);
-  //       console.log("Distance to the drop-off location:", distance);
-  //       if (distance <= 200) {
-  //         handleDropOff("Unallocated");
-  //         toast.success("Drop off successful!");
-  //       } else {
-  //         // alert(`Drop off unsuccessful, too far from the, ${location.id}`)
-  //         toast.error(`Drop off unsuccessful, too far from the, ${location.id}`);
-  //       }
-  //     },
-  //     (error) => {
-  //       toast.error("Unable to retrieve your location.");
-  //     }
-  //   );
-  // }
-
-  // function DropOffRental(event){
-  //   console.log(event);
-  //   handleDrop(event);
-  // }
-
 
   useEffect(() => {
     // Fetch building data only once, store it in localStorage
@@ -230,24 +142,6 @@ const Profile = () => {
     }
   };
   
-  // Handle Rent button click
-  // const cancelRent = (ritem) => {
-  //   axios
-  //     .post(`https://api-campus-transport.vercel.app/cancel-rent/${userId}/${ritem}`)
-  //     .then(() => {
-  //       handleHOME();
-        
-  //       alert("Rental cancellation successful!");
-  //       sessionStorage.removeItem("userData");
-
-  //       // Reset rentalCancelled after refetch
-  //       setRentalCancelled(true);
-  //       refetchUserData(); // Trigger a refetch of the user data after cancelation
-  //     })
-  //     .catch((error) => {
-  //       // console.error("Error canceling rental:", error);
-  //     });
-  // };
 
   // Perform only one fetch, and make operations using the session storage data, instead of fetching from firestore
   useEffect(() => {
@@ -258,14 +152,6 @@ const Profile = () => {
     }
   }, [rentalCancelled, refetchUserData]);
 
-
-  // const handleCancel = () => {
-  //   setUserData(null);
-  // };
-
-  // const handleRentClick = () => {
-  //   setShowPopup(true);
-  // };
 
   const handleRentClick = (vehicle) => {
     setSelectedBike(vehicle);
@@ -339,22 +225,12 @@ const Profile = () => {
                 </div> */}
                 <div className="divider"></div>
                 <div className="rent-history">
-                  <h4>Current Rental</h4>
+                <h4 className="currentRentalHeading">Current Rental</h4>
                   <div className="bicycle-item">
                     <h3>{userData && userData.item ? userData.item : 'No current rental'}</h3>
                     <p>
                       Pickup: {userData && userData.location ? userData.location : 'No pickup available'}
                     </p>
-
-                    {/* Only show the cancel button if the user has a current rental */}
-                    {/* {userData && userData.item && userData.location && (
-                      <a
-                        className="cancel-link"
-                        onClick={() => cancelRent(userData.item)}
-                      >
-                        Cancel Rental
-                      </a>
-                    )} */}
                     
                   </div>
                 </div>
@@ -368,7 +244,7 @@ const Profile = () => {
                         <div className="event" key={index}>
                           <li key={index}>
                           <h4>{event.name}</h4>
-                          <p>{event.description}</p>
+                          <p>{event.description} Available: {event.Vehicle}</p>
                           {/* <li key={index}>{event["name"]}</li> */}
                           <a
                             href="#"
@@ -453,28 +329,6 @@ const Profile = () => {
                 </form>
               </>
             )}
-
-            {showPopup && (
-            <div className="popup-overlay">
-              <div className="popup-content">
-                <h4>Cancel Rental</h4>
-                <p>
-                  Are you sure you want to cancel this item? <br />
-                </p>
-                  {/* <button 
-                  className="cancelBtn" 
-                  // onClick={handleClosePopup}
-                    // className="rentBtn" 
-                     onClick={handleCancel}
-                  >
-                    Cancel
-                  </button> */}
-                
-
-                <button className="closeBtn" onClick={handleClosePopup}>Close</button>
-              </div>
-            </div>
-          )}
            
           </div>
         </div>

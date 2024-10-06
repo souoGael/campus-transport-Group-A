@@ -25,7 +25,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  margin-right: 10px;
+
 }
 
 .profile-info {
@@ -51,6 +51,8 @@
 .events {
   margin-top: 15px;
   margin-left: 30px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .event {
@@ -155,20 +157,102 @@ h2 {
 @media (max-width: 430px) { /* Mobile, decently sized phones */
   .profile-card {
     margin-top: 100px;
-    width: 370px;
-    height: 700px;
+    position: absolute;
+    width: 400px;
+    height: 720px;
+  }
+
+  .divider{
+    position: absolute;
+    margin-top: 88px;
+    width: 150px;
+  }
+  .profile-info {
+    position: absolute;
+    margin: 100px 0px 0px 160px;
+
+  }
+  .stat-item {
+    position: absolute;
+    margin-top: 120px;
+    margin-left: 45px;
+  }
+  .currentRentalHeading {
+    margin-top: 100px;
+    margin-left: 40px;
   }
   .ProfileIcon1 {
-    width: 100px;
+    width: 150px;
     height: 150px;
     padding: 40px;
     border-radius: 15px;
     margin-top: 10px;
     margin-left: 30px;
   }
+  .events{
+    max-height: 280px;
+  }
 }
 
 @media (max-width: 390px) { /* Mobile, horrendously sized phones */
-
+  .ProfileIcon1 {
+    width: 100px;
+    height: 100px;
+    padding: 40px;
+    border-radius: 15px;
+    margin-left: 30px;
+  }
+  .profile-card {
+    margin-top: 100px;
+    margin-bottom: 30px;
+    position: absolute;
+    width: 350px;
+    height: 700px;
+  }
+  .profile-picture {
+    position: absolute;
+    top:10px;
+    left: 5px;
+    /* margin: 80px 0px 0px 0px; */
+    padding-right: 600px;
+  }
+  .profile-info {
+    position: absolute;
+    top: 10px;
+    left: -40px;
+  }
+  .stat-item {
+    position: absolute;
+    top: 40px;
+    left:160px;
+  }
+  .currentRentalHeading {
+    margin-top: 120px;
+    margin-left: 20px;
+  }
+  .divider {
+    width: 130px;
+    margin-top: 110px;
+    position: absolute;
+    left: 0px;
+  }
+  .events{
+    max-height: 280px;
+  }
 
 }
+
+@media (max-width: 375px) { /* Mobile, horrendously sized phones */
+  .profile-card {
+    margin-top: 100px;
+    margin-bottom: 30px;
+    position: absolute;
+    width: 350px;
+    height: 550px;
+  }
+  .events{
+    max-height: 180px;
+  }
+
+}
+
