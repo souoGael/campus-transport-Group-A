@@ -4,7 +4,7 @@
 
 Welcome to the **Campus Transportation App** repository, a part of the Smart Campus System. This project aims to enhance mobility and accessibility on campus by providing efficient navigation and transportation services.
 
-Link: https://campus-transport.azurewebsites.net
+Link to backup site: https://victorious-flower-0d362e31e.5.azurestaticapps.net/
 
 ## Project Overview
 
